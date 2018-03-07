@@ -1,164 +1,127 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
-	<style type="text/css">
-		*{
-			border:0;
-			margin:0;
-			padding:0;
-		}
-		#buttonbox{
-			width:500px;
-			height:100px;
-			margin-top:260px;
-			margin-left:400px;
-		}
-		li{
-			display:block;
-			float:left;
-			width:50px;
-			height:50px;
-			border:1px solid black;
-		}
-		li:nth-child(1){
-			background-color:red;
-		}
-		li:nth-child(2){
-			background-color:green;
-		}
-		li:nth-child(3){
-			background-color:blue;
-		}
-		li:nth-child(4){
-			background-color:yellow;
-		}
-		#canvas{
-			border:1px solid black;
-			width:500px;
-			height:300px;
-			margin-left:400px;
-		}
-	</style>
+    <title></title>
+    <style type="text/css">
+        *{
+            border:0;
+            margin:0;
+            padding:0;
+        }
+        #buttonbox{
+            width:500px;
+            height:100px;
+            margin-top:260px;
+            margin-left:400px;
+        }
+        li{
+            display:block;
+            float:left;
+            width:50px;
+            height:50px;
+            border:1px solid black;
+        }
+        li:nth-child(1){
+            background-color:red;
+        }
+        li:nth-child(2){
+            background-color:green;
+        }
+        li:nth-child(3){
+            background-color:blue;
+        }
+        li:nth-child(4){
+            background-color:yellow;
+        }
+        #myCanvas{
+            border:1px solid black;
+            margin-left:400px;
+        }
+    </style>
 </head>
 <body>
-	<div id="box">
-		<ul id="buttonbox">
-			<li>1</li>
-			<li>2</li>
-			<li>3</li>
-			<li>clear</li>
-		</ul>
-		<canvas id="canvas">
+    <div id="box">
+        <ul id="buttonbox">
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>clear</li>
+        </ul>
+        <canvas id="myCanvas">
 
-		</canvas>
-		<script src="./jquery-3.2.1.min.js"></script>
-		<script src="./jcanvas.min.js"></script>
-		<script>
-		var layer=0;
-   		CanvasExt = {
-        drawRect:function(canvasId,penColor,strokeWidth){
-            var that=this;
-            that.penColor=penColor;
-            that.penWidth=strokeWidth;
+        </canvas>
+    </div>
+        <script src="./jquery-3.2.1.min.js"></script>
+        <script src="./jcanvas.min.js"></script>
+        <script>
+        window.addEventListener('load', eventWindowLoaded, false);
 
-            var canvas=document.getElementById(canvasId);
-            //canvas 的矩形框
-            var canvasRect = canvas.getBoundingClientRect();
-            //矩形框的左上角坐标
-            var canvasLeft=canvasRect.left;
-            var canvasTop=canvasRect.top;
+        function eventWindowLoaded () {
+            canvasApp(); //包含整个Canvas应用程序
+        }
+        function canvasSupport (e) {
+  
+            return !!e.getContext;
 
-            var layerIndex=layer;
-            var layerName="layer";
-            var x=0;
-            var y=0;
+        }
+        function canvasApp () {
+            var myCanvas = document.getElementById('myCanvas');
 
-            //鼠标点击按下事件，画图准备
-            canvas.onmousedown=function(e){
+        if (!canvasSupport(myCanvas)) {
+            return; 
+        }
+  
+        var ctx = myCanvas.getContext('2d');
+        myCanvas.width = window.innerWidth;
+        myCanvas.height = window.innerHeight;
+          
+        myCanvas.addEventListener('mousedown', mouseDown, false);
+        myCanvas.addEventListener('mouseup', mouseUp, false);
+        myCanvas.addEventListener('mousemove', mouseMove, false);
+          
+        var rect = {},
+            drag = false;
+          
+        function mouseDown(e) {
+            rect.startX = (e.pageX - this.offsetLeft);
+            rect.startY = (e.pageY - this.offsetTop);
+            
+            drag = true;
+        }
 
-                //设置画笔颜色和宽度
-                var color=that.penColor;
-                var penWidth=that.penWidth;
-
-                layerIndex++;
-                layer++;
-                layerName+=layerIndex;
-                x = (e.clientX-canvasLeft)*(canvas.width/canvasRect.width);
-                y = (e.clientY-canvasTop)*(canvas.height/canvasRect.height);
-
-
-                $("#"+canvasId).addLayer({
-                    type: 'rectangle',
-                    strokeStyle: color,
-                    strokeWidth: penWidth,
-                    name:layerName,
-                    fromCenter: false,
-                    x: x, y: y,
-                    width: 1,
-                    height: 1
-                });
-
-                $("#"+canvasId).drawLayers();
-                $("#"+canvasId).saveCanvas();
-                //鼠标移动事件，画图
-                canvas.onmousemove=function(e){
-                    width = (e.clientX-canvasLeft-x);
-                    height = (e.clientY-canvasTop-y);
-
-                    $("#"+canvasId).removeLayer(layerName);
-
-                    $("#"+canvasId).addLayer({
-                        type: 'rectangle',
-                        strokeStyle: color,
-                        strokeWidth: penWidth,
-                        name:layerName,
-                        fromCenter: false,
-                        x: x, y: y,
-                        width: width,
-                        height: height
-                    });
-
-                    $("#"+canvasId).drawLayers();
-                }
-            };
-
-            canvas.onmouseup=function(e){
-
-                var color=that.penColor;
-                var penWidth=that.penWidth;
-
-                canvas.onmousemove=null;
-
-                width = e.clientX-canvasLeft-x;
-                height = e.clientY-canvasTop-y;
-
-                $("#"+canvasId).removeLayer(layerName);
-
-                $("#"+canvasId).addLayer({
-                    type: 'rectangle',
-                    strokeStyle: color,
-                    strokeWidth: penWidth,
-                    name:layerName,
-                    fromCenter: false,
-                    x: x, y: y,
-                    width: width,
-                    height: height
-                });
-
-                $("#"+canvasId).drawLayers();
-                $("#"+canvasId).saveCanvas();
+        function mouseUp() {
+            drag = false;
+        }
+          
+        function mouseMove(e) {
+            if (drag) {
+              rect.w = (e.pageX - this.offsetLeft) - rect.startX;
+              rect.h = (e.pageY - this.offsetTop) - rect.startY ;
+              ctx.clearRect(0,0,myCanvas.width,myCanvas.height);
+              drawRect("fill");
             }
         }
-    };
-
-    drawPen();
-    function drawPen(){
-        var color = "blue";
-        var width = 2;
-        CanvasExt.drawRect("canvas",color,width);
-    }
-		</script>
-	<div>
+          
+        function drawRect(style){
+            if (style==="fill"){
+              ctx.fillRect(rect.startX, rect.startY, rect.w, rect.h);
+            } 
+            if (style==="stroke"){
+              ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
+            }
+        }
+          
+        function drawScreen () {
+            ctx.lineWidth = 10;
+            ctx.fillStyle = "#f36";
+            ctx.strokeStyle = '#f36';  
+            ctx.font="24px Arial";
+            ctx.fillText("拖动鼠标就可以绘制矩形", 50, 50);
+        }
+          
+        drawScreen();
+  
+        }
+        </script>
 </body>
 </html>
