@@ -8,7 +8,7 @@
             margin:0;
             padding:0;
         }
-        #myCanvas{
+        canvas{
             border:1px solid black;
             margin-top:50px;
             margin-left:300px;
@@ -44,6 +44,41 @@
         a{
             text-decoration:none;
         }
+        #canvasbg{ 
+            background-color:#ccc;
+            opacity:0.5;
+            filter:alpha(opacity=50); 
+            position:absolute; 
+            left:0;
+            top:0;
+            z-index:500;
+        }
+        #toolbox{
+            position:fixed;
+            float:right;
+            width:200px;
+            margin-right:0px;
+            z-index:501;
+            background-color:white;
+        }
+        #circletool{
+
+        }
+        #rectangletool{
+
+        }
+        #othertool{
+
+        }
+        #cleartool{
+
+        }
+        #savetool{
+
+        }
+        #returntool{
+
+        }
     </style>
 </head>
 <body>
@@ -57,22 +92,79 @@
 
         </canvas>--><!--canvas需要在标签中指定长宽否则会出现问题-->
     </div>
+        <script src="jquery-3.2.1.min.js"></script>
         <script>
         window.onload=function(){
         
         function createCanvas(){
+            var getid;
             var numofpic=9;//prompt("请输入上传的图片张数","9");
             //if(numofpic<=0||numofpic>50)
               //  alert("输入错误");
-            var tree=document.getElementById("box");
             for(var i=1;i<=numofpic;i++){
-                var newCanvas=document.createElement("canvas");
-                newCanvas.setAttribute("id","myCanvas");
-                tree.appendChild(newCanvas);
+                var createc=$("<canvas></canvas>");
+                $("#box").append(createc);
+                createc.attr("id","Canvas"+i);
+                
             }
+
+           $("canvas").click(function(e){
+                getid=$(e.target).attr('id');
+                alert(getid);
+                openNew();
+                return false;
+            });
+
+           function openNew(){//悬浮层弹出
+                
+                var sWidth=document.body.scrollWidth;
+                var sHeight=document.body.scrollHeight;
+                var wHeight=document.documentElement.clientHeight;//获取页面的可视区域高度和宽度
+                var oMask=document.createElement("div");
+                    oMask.id="canvasbg";
+                    oMask.style.height=sHeight+"px";
+                    oMask.style.width=sWidth+"px";
+                    document.body.appendChild(oMask);
+
+                var tools=document.createElement("div");
+                    tools.id="toolbox";
+                var circletools=document.createElement("button");
+                    circletools.id="circletool";
+                var rectangletools=document.createElement("button");
+                    circletools.id="rectangletool";
+                var othertools=document.createElement("button");
+                    othertools.id="othertool";
+                var cleartools=document.createElement("button");
+                    cleartools.id="cleartool";
+                var savetools=document.createElement("button");
+                    savetools.id="savetool";
+                var returntools=document.createElement("button");
+                    returntools.id="returntool";
+                    
+                //设置Canvas的left和top
+                $("#"+getid).css("z-index","501")
+                            .css("margin-left",sWidth/2-800/2+"px")
+                            .css("margin-top",wHeight/2-800/2+"px")
+                            .css("width","800px")
+                            .css("height","600px")
+                            .css("position","fixed")
+                            .css("background-color","white");
+                            //.css("float","left");
+                //点击Canvas以外的区域也可以关闭Canvas
+                oMask.onclick=function(){
+                    document.body.removeChild(oMask);
+                };
+            };
+
+            function canvassave(){
+
+            }
+
+
+
         }
         
-        function createImage(){
+        /*function createImage(){
             var imgFile = obj.files[0];  
             console.log(imgFile);  
             var img = new Image();  
@@ -90,18 +182,19 @@
                 obj.value = '';  
             }  
             fr.readAsDataURL(imgFile);  
-        }
+        }*/
 
         function canvasResult(){
 
             var canvaslist=new Array();
             var area=0;
-            canvaslist=document.getElementsByTagName("canvas");
+            
+            
             //console.log(canvaslist.length);
             
         
             function canvasRectangle(){ //绘制canvas中矩形
-                var myCanvas = document.getElementById('myCanvas'); 
+                var myCanvas=$("#canvas"+i); 
                 console.log(myCanvas);
                 var ctx=myCanvas.getContext('2d');
                 //myCanvas.width = window.innerWidth;
@@ -152,12 +245,55 @@
                 drawScreen();
 
             }
+
+            function canvasCircle(){//绘制canvas中椭圆形
+                var myCanvas = document.getElementById('myCanvas'); 
+                console.log(myCanvas);
+                var ctx=myCanvas.getContext('2d');
+                  
+                myCanvas.addEventListener('mousedown', mouseDown, false);
+                myCanvas.addEventListener('mouseup', mouseUp, false);
+                myCanvas.addEventListener('mousemove', mouseMove, false);
+                  
+                var rect={},drag=false;
+                  
+                function mouseDown(e){
+                    x = e.offsetX;
+                    y = e.offsetY;
+                }
+
+                function mouseUp(){
+                    drag=false;
+                }
+
+                function mousemove(e){
+                    if(flag){
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        ctx.beginPath();
+                        var rx=(e.offsetX-x)/2;
+                        var ry=(e.offsetY-y)/2;
+                        var r=Math.sqrt(rx*rx+ry*ry);
+                        ctx.arc(rx+x,ry+y,r,0,Math.PI*2);
+                        ctx.stroke();
+                    }
+                }
+
+                function drawScreen(){
+                    ctx.lineWidth=1;
+                    ctx.strokeStyle='black';  
+                }
+
+                drawScreen();
+
+            }
+
             canvasRectangle();
+            canvasCircle();
         }
 
         createCanvas();
-        createImage();
-        canvasResult();
+        //createImage();
+        //canvasResult();
     }
     </script>
 </body>
