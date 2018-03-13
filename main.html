@@ -45,9 +45,9 @@
             text-decoration:none;
         }
         #canvasbg{ 
-            background-color:#ccc;
-            opacity:0.5;
-            filter:alpha(opacity=50); 
+            background-color:white;
+            /*opacity:0.5;
+            filter:alpha(opacity=50);*/ 
             position:absolute;
             left:0;
             top:0;
@@ -132,6 +132,7 @@
             var getid;
             var canvaslist=new Array();
             var area=0;
+            var thisid;
             var numofpic=9;//prompt("请输入上传的图片张数","9");
             //if(numofpic<=0||numofpic>50)
               //  alert("输入错误");
@@ -146,6 +147,7 @@
                 if(clicksign==0){
                     getid=$(e.target).attr('id');
                     alert(getid);
+
                     openNew();
                 }
             });//点击要标注的canvas还原大小以进行标注
@@ -199,9 +201,9 @@
                             .css("margin-top","0")
                             .css("width","800px")
                             .css("height","600px")
-                            .css("position","fixed")
-                            .css("background-color","white");
+                            .css("position","fixed");
                             //.css("float","left");
+
             
                 //点击return关闭Canvas
                 $("#returntool").click(function(){
@@ -214,17 +216,20 @@
                                     .css("margin-top","50px")
                                     .css("width","300px")
                                     .css("height","150px")
-                                    .css("position","static")
-                                    .css("background-color","white");
+                                    .css("position","static");
                         clicksign=0;
                     }
                 });
 
                 $("#savetool").click(function(){//保存标注结果
+                    var ctx=$("#"+getid)[0].getContext('2d');
+                    ctx.save();
                     alert("保存成功！");
                 });
 
                 $("#cleartool").click(function(){//清除标注痕迹
+                    var cxt=$("#"+getid)[0].getContext("2d");  
+                    cxt.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height); 
                     alert("清除成功！");
                 });
 
@@ -233,13 +238,13 @@
                 })
 
                 $("#circletool").click(function(){//用圆线标注图像
-                    var myCanvas = document.getElementById('myCanvas'); 
-                    console.log(myCanvas);
-                    var ctx=myCanvas.getContext('2d');
+                    //var myCanvas = document.getElementById('myCanvas'); 
+                    //console.log(myCanvas);
+                    var ctx=$("#"+getid)[0].getContext('2d');
                           
-                    myCanvas.addEventListener('mousedown', mouseDown, false);
-                    myCanvas.addEventListener('mouseup', mouseUp, false);
-                    myCanvas.addEventListener('mousemove', mouseMove, false);
+                    $("#"+getid)[0].addEventListener('mousedown', mouseDown, false);
+                    $("#"+getid)[0].addEventListener('mouseup', mouseUp, false);
+                    $("#"+getid)[0].addEventListener('mousemove', mouseMove, false);
                           
                     var rect={},drag=false;
                           
@@ -252,8 +257,8 @@
                         drag=false;
                     }
 
-                    function mousemove(e){
-                        if(flag){
+                    function mouseMove(e){
+                        if(drag){
                             ctx.clearRect(0,0,canvas.width,canvas.height);
                             ctx.beginPath();
                             var rx=(e.offsetX-x)/2;
@@ -273,15 +278,15 @@
                 });
 
                 $("#rectangletool").click(function(){//用矩形线标注图像
-                    var myCanvas=$("#canvas"+i); 
-                    console.log(myCanvas);
-                    var ctx=myCanvas.getContext('2d');
+                    //var myCanvas=$("#canvas"+i); 
+                    //console.log(myCanvas);
+                    var ctx=$("#"+getid)[0].getContext('2d');
                     //myCanvas.width = window.innerWidth;
                     //myCanvas.height = window.innerHeight;
                           
-                    myCanvas.addEventListener('mousedown', mouseDown, false);
-                    myCanvas.addEventListener('mouseup', mouseUp, false);
-                    myCanvas.addEventListener('mousemove', mouseMove, false);
+                    $("#"+getid)[0].addEventListener('mousedown', mouseDown, false);
+                    $("#"+getid)[0].addEventListener('mouseup', mouseUp, false);
+                    $("#"+getid)[0].addEventListener('mousemove', mouseMove, false);
                           
                     var rect={},drag=false;
                           
@@ -301,7 +306,7 @@
                         if(drag){
                             rect.w=(e.pageX-this.offsetLeft)-rect.startX;
                             rect.h=(e.pageY-this.offsetTop)-rect.startY ;
-                            ctx.clearRect(0,0,myCanvas.width,myCanvas.height);
+                            ctx.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
                             drawRect("stroke");
                         }
                     }
@@ -318,7 +323,7 @@
                           
                     function drawScreen(){
                         ctx.lineWidth=1;
-                        ctx.strokeStyle='black';  
+                        ctx.strokeStyle='#f36';  
                     }
 
                     drawScreen();
