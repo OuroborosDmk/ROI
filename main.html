@@ -48,36 +48,67 @@
             background-color:#ccc;
             opacity:0.5;
             filter:alpha(opacity=50); 
-            position:absolute; 
+            position:absolute;
             left:0;
             top:0;
             z-index:500;
         }
         #toolbox{
             position:fixed;
-            float:right;
-            width:200px;
-            margin-right:0px;
-            z-index:501;
+            width:150px;
+            top:0;
+            right:0;
+            z-index:502;
             background-color:white;
+            border:1px solid black;
         }
         #circletool{
-
+            display:block;
+            width:50px;
+            height:50px;
+            border:1px solid black;
+            background-color:red;
+            outline:none;
         }
         #rectangletool{
-
+            display:block;
+            width:50px;
+            height:50px;
+            border:1px solid black;
+            background-color:blue;
+            outline:none;
         }
         #othertool{
-
+            display:block;
+            width:50px;
+            height:50px;
+            border:1px solid black;
+            background-color:green;
+            outline:none;
         }
         #cleartool{
-
+            display:block;
+            width:50px;
+            height:50px;
+            border:1px solid black;
+            background-color:white;
+            outline:none;
         }
         #savetool{
-
+            display:block;
+            width:50px;
+            height:50px;
+            border:1px solid black;
+            background-color:yellow;
+            outline:none;
         }
         #returntool{
-
+            display:block;
+            width:50px;
+            height:50px;
+            border:1px solid black;
+            background-color:white;
+            outline:none;
         }
     </style>
 </head>
@@ -97,7 +128,10 @@
         window.onload=function(){
         
         function createCanvas(){
+            var clicksign=0;//点击标志，是否可以再次触发Canvas点击事件
             var getid;
+            var canvaslist=new Array();
+            var area=0;
             var numofpic=9;//prompt("请输入上传的图片张数","9");
             //if(numofpic<=0||numofpic>50)
               //  alert("输入错误");
@@ -106,194 +140,222 @@
                 $("#box").append(createc);
                 createc.attr("id","Canvas"+i);
                 
-            }
+            }//生成与需要标注的图像张数相同的canvas
 
            $("canvas").click(function(e){
-                getid=$(e.target).attr('id');
-                alert(getid);
-                openNew();
-                return false;
-            });
+                if(clicksign==0){
+                    getid=$(e.target).attr('id');
+                    alert(getid);
+                    openNew();
+                }
+            });//点击要标注的canvas还原大小以进行标注
 
-           function openNew(){//悬浮层弹出
-                
-                var sWidth=document.body.scrollWidth;
-                var sHeight=document.body.scrollHeight;
-                var wHeight=document.documentElement.clientHeight;//获取页面的可视区域高度和宽度
+           function openNew(){//悬浮层弹出，还原canvas大小
+                clicksign=1;
+                var sWidth=document.body.scrollWidth;//获取整个页面宽度
+                var sHeight=document.body.scrollHeight;//获取整个页面高度
+                var wHeight=document.documentElement.clientHeight;//获取页面的可视区域高度
                 var oMask=document.createElement("div");
                     oMask.id="canvasbg";
                     oMask.style.height=sHeight+"px";
                     oMask.style.width=sWidth+"px";
-                    document.body.appendChild(oMask);
+                    document.body.appendChild(oMask);//弹出悬浮层
 
+                //弹出工具栏
                 var tools=document.createElement("div");
                     tools.id="toolbox";
+                    tools.style.height=sHeight+"px";
+                    document.body.appendChild(tools);
                 var circletools=document.createElement("button");
                     circletools.id="circletool";
+                    circletools.innerHTML="圆线";
+                    tools.appendChild(circletools);
                 var rectangletools=document.createElement("button");
-                    circletools.id="rectangletool";
+                    rectangletools.id="rectangletool";
+                    rectangletools.innerHTML="矩形线";
+                    tools.appendChild(rectangletools);
                 var othertools=document.createElement("button");
                     othertools.id="othertool";
+                    othertools.innerHTML="不规则";
+                    tools.appendChild(othertools);
                 var cleartools=document.createElement("button");
                     cleartools.id="cleartool";
+                    cleartools.innerHTML="清除";
+                    tools.appendChild(cleartools);
                 var savetools=document.createElement("button");
                     savetools.id="savetool";
+                    savetools.innerHTML="保存";
+                    tools.appendChild(savetools);
                 var returntools=document.createElement("button");
                     returntools.id="returntool";
+                    returntools.innerHTML="返回";
+                    tools.appendChild(returntools);
                     
                 //设置Canvas的left和top
                 $("#"+getid).css("z-index","501")
-                            .css("margin-left",sWidth/2-800/2+"px")
-                            .css("margin-top",wHeight/2-800/2+"px")
+                            .css("left",sWidth/2-800/2+"px")
+                            .css("top",wHeight/2-600/2+"px")
+                            .css("margin-left","0")
+                            .css("margin-top","0")
                             .css("width","800px")
                             .css("height","600px")
                             .css("position","fixed")
                             .css("background-color","white");
                             //.css("float","left");
-                //点击Canvas以外的区域也可以关闭Canvas
-                oMask.onclick=function(){
-                    document.body.removeChild(oMask);
-                };
-            };
+            
+                //点击return关闭Canvas
+                $("#returntool").click(function(){
+                    var returnsign=confirm("确认返回？");
+                    if(returnsign==true){
+                        document.body.removeChild(oMask);
+                        document.body.removeChild(toolbox);
+                        $("#"+getid).css("z-index","auto")
+                                    .css("margin-left","300px")
+                                    .css("margin-top","50px")
+                                    .css("width","300px")
+                                    .css("height","150px")
+                                    .css("position","static")
+                                    .css("background-color","white");
+                        clicksign=0;
+                    }
+                });
 
-            function canvassave(){
+                $("#savetool").click(function(){//保存标注结果
+                    alert("保存成功！");
+                });
 
+                $("#cleartool").click(function(){//清除标注痕迹
+                    alert("清除成功！");
+                });
+
+                $("#othertool").click(function(){//用不规则线标注图像
+                    alert("次功能尚未开放！");
+                })
+
+                $("#circletool").click(function(){//用圆线标注图像
+                    var myCanvas = document.getElementById('myCanvas'); 
+                    console.log(myCanvas);
+                    var ctx=myCanvas.getContext('2d');
+                          
+                    myCanvas.addEventListener('mousedown', mouseDown, false);
+                    myCanvas.addEventListener('mouseup', mouseUp, false);
+                    myCanvas.addEventListener('mousemove', mouseMove, false);
+                          
+                    var rect={},drag=false;
+                          
+                    function mouseDown(e){
+                        x = e.offsetX;
+                        y = e.offsetY;
+                    }
+
+                    function mouseUp(){
+                        drag=false;
+                    }
+
+                    function mousemove(e){
+                        if(flag){
+                            ctx.clearRect(0,0,canvas.width,canvas.height);
+                            ctx.beginPath();
+                            var rx=(e.offsetX-x)/2;
+                            var ry=(e.offsetY-y)/2;
+                            var r=Math.sqrt(rx*rx+ry*ry);
+                            ctx.arc(rx+x,ry+y,r,0,Math.PI*2);
+                            ctx.stroke();
+                        }
+                    }
+
+                    function drawScreen(){
+                        ctx.lineWidth=1;
+                        ctx.strokeStyle='black';  
+                    }
+
+                    drawScreen();
+                });
+
+                $("#rectangletool").click(function(){//用矩形线标注图像
+                    var myCanvas=$("#canvas"+i); 
+                    console.log(myCanvas);
+                    var ctx=myCanvas.getContext('2d');
+                    //myCanvas.width = window.innerWidth;
+                    //myCanvas.height = window.innerHeight;
+                          
+                    myCanvas.addEventListener('mousedown', mouseDown, false);
+                    myCanvas.addEventListener('mouseup', mouseUp, false);
+                    myCanvas.addEventListener('mousemove', mouseMove, false);
+                          
+                    var rect={},drag=false;
+                          
+                    function mouseDown(e){
+                        rect.startX=(e.pageX - this.offsetLeft);
+                        rect.startY=(e.pageY - this.offsetTop);
+                        drag=true;
+                    }
+
+                    function mouseUp(){
+                        drag=false;
+                        console.log(rect.w*rect.h);//矩形面积
+                        area=rect.w*rect.h;
+                    }
+                          
+                    function mouseMove(e){
+                        if(drag){
+                            rect.w=(e.pageX-this.offsetLeft)-rect.startX;
+                            rect.h=(e.pageY-this.offsetTop)-rect.startY ;
+                            ctx.clearRect(0,0,myCanvas.width,myCanvas.height);
+                            drawRect("stroke");
+                        }
+                    }
+                          
+                    function drawRect(style){
+                        if(style==="fill"){
+                            ctx.fillRect(rect.startX, rect.startY, rect.w, rect.h);
+                        } 
+                        if(style==="stroke"){
+                            ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
+                              
+                        }
+                    }
+                          
+                    function drawScreen(){
+                        ctx.lineWidth=1;
+                        ctx.strokeStyle='black';  
+                    }
+
+                    drawScreen();
+                });
+                
+            
             }
 
 
+
+
+            /*function createImage(){
+                var imgFile = obj.files[0];  
+                console.log(imgFile);  
+                var img = new Image();  
+                var fr = new FileReader();  
+                fr.onload = function(){  
+                    var htmlStr = '<div class="upWrap">';  
+                    htmlStr += '<div class="fileWrap">';  
+                    htmlStr += '<input type="file" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg" onchange="upImg(this)"/>';  
+                    htmlStr += '</div>';  
+                    htmlStr += '<div class="imgWrap upedImg"><span class="deleteImg">X</span>';  
+                    htmlStr += '<img src="'+fr.result+'" alt="" />';  
+                    htmlStr += '</div>';  
+                    htmlStr += '</div>';  
+                    //$('.imgOnloadWrap').append(htmlStr);  
+                    obj.value = '';  
+                }  
+                fr.readAsDataURL(imgFile);  
+            }*/
+
+            
 
         }
         
-        /*function createImage(){
-            var imgFile = obj.files[0];  
-            console.log(imgFile);  
-            var img = new Image();  
-            var fr = new FileReader();  
-            fr.onload = function(){  
-                var htmlStr = '<div class="upWrap">';  
-                htmlStr += '<div class="fileWrap">';  
-                htmlStr += '<input type="file" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg" onchange="upImg(this)"/>';  
-                htmlStr += '</div>';  
-                htmlStr += '<div class="imgWrap upedImg"><span class="deleteImg">X</span>';  
-                htmlStr += '<img src="'+fr.result+'" alt="" />';  
-                htmlStr += '</div>';  
-                htmlStr += '</div>';  
-                //$('.imgOnloadWrap').append(htmlStr);  
-                obj.value = '';  
-            }  
-            fr.readAsDataURL(imgFile);  
-        }*/
-
-        function canvasResult(){
-
-            var canvaslist=new Array();
-            var area=0;
-            
-            
-            //console.log(canvaslist.length);
-            
-        
-            function canvasRectangle(){ //绘制canvas中矩形
-                var myCanvas=$("#canvas"+i); 
-                console.log(myCanvas);
-                var ctx=myCanvas.getContext('2d');
-                //myCanvas.width = window.innerWidth;
-                //myCanvas.height = window.innerHeight;
-                  
-                myCanvas.addEventListener('mousedown', mouseDown, false);
-                myCanvas.addEventListener('mouseup', mouseUp, false);
-                myCanvas.addEventListener('mousemove', mouseMove, false);
-                  
-                var rect={},drag=false;
-                  
-                function mouseDown(e){
-                    rect.startX=(e.pageX - this.offsetLeft);
-                    rect.startY=(e.pageY - this.offsetTop);
-                    drag=true;
-                }
-
-                function mouseUp(){
-                    drag=false;
-                    console.log(rect.w*rect.h);//矩形面积
-                    area=rect.w*rect.h;
-                }
-                  
-                function mouseMove(e){
-                    if(drag){
-                      rect.w=(e.pageX-this.offsetLeft)-rect.startX;
-                      rect.h=(e.pageY-this.offsetTop)-rect.startY ;
-                      ctx.clearRect(0,0,myCanvas.width,myCanvas.height);
-                      drawRect("stroke");
-                    }
-                }
-                  
-                function drawRect(style){
-                    if(style==="fill"){
-                      ctx.fillRect(rect.startX, rect.startY, rect.w, rect.h);
-                    } 
-                    if(style==="stroke"){
-                      ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
-                      
-                    }
-                }
-                  
-                function drawScreen(){
-                    ctx.lineWidth=1;
-                    ctx.strokeStyle='black';  
-                }
-
-                drawScreen();
-
-            }
-
-            function canvasCircle(){//绘制canvas中椭圆形
-                var myCanvas = document.getElementById('myCanvas'); 
-                console.log(myCanvas);
-                var ctx=myCanvas.getContext('2d');
-                  
-                myCanvas.addEventListener('mousedown', mouseDown, false);
-                myCanvas.addEventListener('mouseup', mouseUp, false);
-                myCanvas.addEventListener('mousemove', mouseMove, false);
-                  
-                var rect={},drag=false;
-                  
-                function mouseDown(e){
-                    x = e.offsetX;
-                    y = e.offsetY;
-                }
-
-                function mouseUp(){
-                    drag=false;
-                }
-
-                function mousemove(e){
-                    if(flag){
-                        ctx.clearRect(0,0,canvas.width,canvas.height);
-                        ctx.beginPath();
-                        var rx=(e.offsetX-x)/2;
-                        var ry=(e.offsetY-y)/2;
-                        var r=Math.sqrt(rx*rx+ry*ry);
-                        ctx.arc(rx+x,ry+y,r,0,Math.PI*2);
-                        ctx.stroke();
-                    }
-                }
-
-                function drawScreen(){
-                    ctx.lineWidth=1;
-                    ctx.strokeStyle='black';  
-                }
-
-                drawScreen();
-
-            }
-
-            canvasRectangle();
-            canvasCircle();
-        }
-
         createCanvas();
-        //createImage();
-        //canvasResult();
+        
     }
     </script>
 </body>
