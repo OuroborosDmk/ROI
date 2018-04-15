@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>123</title>
+	<style type="text/css">
+	*{
+		border:0;
+		margin:0;
+		padding:0;
+	}
+	</style>
+	<script type="text/javascript">
+	if (window.XMLHttpRequest){
+		xmlhttp=new XMLHttpRequest();
+	}
+	else{
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	 }
+	xmlhttp.open("GET","savedata.xml",false);
+	xmlhttp.send();
+	xmlDoc=xmlhttp.responseXML; 
+	x=xmlDoc.getElementsByTagName("INPUT");
+
+	function inputdisplay(i)
+	{
+		typename=(x[i].getElementsByTagName("TYPENAME")[0].childNodes[0].nodeValue);
+		type=(x[i].getElementsByTagName("TYPE")[0].childNodes[0].nodeValue);
+		name=(x[i].getElementsByTagName("NAME")[0].childNodes[0].nodeValue);
+		value=(x[i].getElementsByTagName("VALUE")[0].childNodes[0].nodeValue);
+		text=(x[i].getElementsByTagName("TEXT")[0].childNodes[0].nodeValue);
+		numofbr=(x[i].getElementsByTagName("NUMOFBR")[0].childNodes[0].nodeValue);
+	}
+</script>
+</head>
+<body>
+	
+	<form action="" method="POST" target="_blank" accept-charset="UTF-8" autocomplete="off" novalidate>
+		<fieldset>
+		<legend>Personal information:</legend>
+		<br>
+		姓名:<input type="text" name="firstname"></input>
+		<br><br>
+		肿瘤类型:
+		<input type="radio" name="ztype" value="良性肿瘤" checked>良性肿瘤</input>
+		<input type="radio" name="ztype" value="恶性肿瘤" >恶性肿瘤</input>
+		<br><br>
+		手术日期:<input type="date" name="sday">
+		<br><br>
+		<input type="submit" value="Submit">
+		<br>
+		<script type="text/javascript">
+			for (var i=0;i<x.length;i++){
+				document.write("");
+			}
+		</script>
+	</form>
+
+</body>
+</html>
