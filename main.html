@@ -236,7 +236,48 @@
                 });
 
                 $("#othertool").click(function(){//用不规则线标注图像
-                    alert("次功能尚未开放！");
+                    alert("1");
+                    var mousePressed = false;
+                    var lastX, lastY;
+                    var ctx;
+                     
+                    function InitThis() {
+                        ctx=$("#"+getid)[0].getContext('2d');
+                     
+                        $("#"+getid).mousedown(function (e){
+                            mousePressed = true;
+                                Draw(e.pageX - $(this).offset().left, e.pageY - $(this).offset().top, false);
+                        });
+                     
+                        $("#"+getid).mousemove(function (e){
+                            if(mousePressed){
+                                Draw(e.pageX - $(this).offset().left, e.pageY - $(this).offset().top, true);
+                            }
+                        });
+                     
+                        $("#"+getid).mouseup(function (e) {
+                            mousePressed = false;
+                        });
+                        $("#"+getid).mouseleave(function (e) {
+                            mousePressed = false;
+                        });
+                    }
+                     
+                    function Draw(x, y, isDown) {
+                        if (isDown) {
+                            ctx.beginPath();
+                            ctx.strokeStyle ="#f36";
+                            ctx.lineWidth = 1;
+                            ctx.lineJoin = "round";
+                            ctx.moveTo(lastX, lastY);
+                            ctx.lineTo(x, y);
+                            ctx.closePath();
+                            ctx.stroke();
+                        }
+                        lastX = x; lastY = y;
+                    }
+
+                    InitThis();
                 })
 
                 $("#circletool").click(function(){//用圆线标注图像
@@ -273,13 +314,14 @@
 
                     function drawScreen(){
                         ctx.lineWidth=1;
-                        ctx.strokeStyle='black';  
+                        ctx.strokeStyle="#f36";  
                     }
 
                     drawScreen();
+
                 });
 
-                $("#rectangletool").click(function(){//用矩形线标注图像
+                $("#rectangletool").click(function(){//用矩形线标注图像//修改监听事件
                     //var myCanvas=$("#canvas"+i); 
                     //console.log(myCanvas);
                     var ctx=$("#"+getid)[0].getContext('2d');
@@ -327,7 +369,7 @@
                           
                     function drawScreen(){
                         ctx.lineWidth=1;
-                        ctx.strokeStyle='#f36';  
+                        ctx.strokeStyle="#f36";  
                     }
 
                     drawScreen();
