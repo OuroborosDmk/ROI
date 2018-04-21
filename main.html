@@ -132,19 +132,22 @@
             var getid;//Cnavas的标号
             var canvaslist=new Array();//储存圈出的面积
             var area=0;//圈出的面积
+            var volume=0;//肿瘤体积
             var thisid;
 
-            var numofpic=9;//prompt("请输入上传的图片张数","9");
-            //if(numofpic<=0||numofpic>50)
-              //  alert("输入错误");
+            var numofpic=prompt("请输入上传的图片张数","9");
+            if(numofpic<=0||numofpic>50)
+                alert("输入错误");
             for(var i=1;i<=numofpic;i++){
                 var createc=$("<canvas></canvas>");
                 $("#box").append(createc);
                 createc.attr("id","Canvas"+i);
-                
             }//生成与需要标注的图像张数相同的canvas
-
-           $("canvas").click(function(e){
+            if(numofpic==1){
+                $("#Canvas1").css("border-color","red");
+            }
+            
+            $("canvas").click(function(e){
                 if(clicksign==0){
                     getid=$(e.target).attr('id'); 
                     alert(getid);
@@ -153,6 +156,17 @@
                 }
             });//点击要标注的canvas还原大小以进行标注
             
+            function V_calculate(){//计算体积肿瘤函数
+                if(numofpic==1){
+                    volume=canvaslist[0]*1;
+                }//医学影像资料一张的时候
+                else if(numofpic%2==0){
+
+                }//医学影像资料张数为偶数
+                else if(numofpic%2==1){
+
+                }//医学影像资料张数为奇数
+            }
 
             function openNew(){//悬浮层弹出，还原canvas大小
                 clicksign=1;
@@ -197,14 +211,14 @@
                     
                 //设置Canvas的left和top
                 $("#"+getid).css("z-index","501")
-                            .css("left",sWidth/2-800/2+"px")
-                            .css("top",wHeight/2-600/2+"px")
+                            .css("left","400px")
+                            .css("top","50px")
                             .css("margin-left","0")
                             .css("margin-top","0")
                             .css("position","fixed");
                             //.css("float","left");
-                $("#"+getid).attr("width","800px")
-                            .attr("height","800px");//Canvas的高宽不能通过CSS设置，只能通过属性直接设置
+                $("#"+getid).attr("width","704px")
+                            .attr("height","701px");//Canvas的高宽不能通过CSS设置，只能通过属性直接设置
 
             
                 //点击return关闭Canvas
@@ -236,7 +250,6 @@
                 });
 
                 $("#othertool").click(function(){//用不规则线标注图像
-                    alert("1");
                     var mousePressed = false;
                     var lastX, lastY;
                     var ctx;
@@ -246,7 +259,7 @@
                      
                         $("#"+getid).mousedown(function (e){
                             mousePressed = true;
-                                Draw(e.pageX - $(this).offset().left, e.pageY - $(this).offset().top, false);
+                            Draw(e.pageX - $(this).offset().left, e.pageY - $(this).offset().top, false);
                         });
                      
                         $("#"+getid).mousemove(function (e){
@@ -283,96 +296,96 @@
                 $("#circletool").click(function(){//用圆线标注图像
                     //var myCanvas = document.getElementById('myCanvas'); 
                     //console.log(myCanvas);
-                    var ctx=$("#"+getid)[0].getContext('2d');
-                          
-                    $("#"+getid)[0].addEventListener('mousedown', mouseDown, false);
-                    $("#"+getid)[0].addEventListener('mouseup', mouseUp, false);
-                    $("#"+getid)[0].addEventListener('mousemove', mouseMove, false);
-                          
-                    var rect={},drag=false;
-                          
-                    function mouseDown(e){
-                        x = e.offsetX;
-                        y = e.offsetY;
-                    }
+                    function InitThis(){
+                        var ctx=$("#"+getid)[0].getContext('2d');
+                              
+                        var rect={},drag=false;
+                        
+                        $("#"+getid).mousedown(function (e){
+                            x = e.offsetX;
+                            y = e.offsetY;
+                        });
 
-                    function mouseUp(){
-                        drag=false;
-                    }
+                        $("#"+getid).mouseup(function (e){
+                            drag=false;
+                        });
 
-                    function mouseMove(e){
-                        if(drag){
-                            ctx.clearRect(0,0,canvas.width,canvas.height);
-                            ctx.beginPath();
-                            var rx=(e.offsetX-x)/2;
-                            var ry=(e.offsetY-y)/2;
-                            var r=Math.sqrt(rx*rx+ry*ry);
-                            ctx.arc(rx+x,ry+y,r,0,Math.PI*2);
-                            ctx.stroke();
+                        $("#"+getid).mousemove(function (e){
+                            if(drag){
+                                ctx.clearRect(0,0,canvas.width,canvas.height);
+                                ctx.beginPath();
+                                var rx=(e.offsetX-x)/2;
+                                var ry=(e.offsetY-y)/2;
+                                var r=Math.sqrt(rx*rx+ry*ry);
+                                ctx.arc(rx+x,ry+y,r,0,Math.PI*2);
+                                ctx.stroke();
+                            }
+                        });
+
+                        function drawScreen(){
+                            ctx.lineWidth=1;
+                            ctx.strokeStyle="#f36";  
                         }
+
+                        drawScreen();
                     }
 
-                    function drawScreen(){
-                        ctx.lineWidth=1;
-                        ctx.strokeStyle="#f36";  
-                    }
-
-                    drawScreen();
-
+                    InitThis();
                 });
 
                 $("#rectangletool").click(function(){//用矩形线标注图像//修改监听事件
                     //var myCanvas=$("#canvas"+i); 
                     //console.log(myCanvas);
-                    var ctx=$("#"+getid)[0].getContext('2d');
-                    //myCanvas.width = window.innerWidth;
-                    //myCanvas.height = window.innerHeight;
-                          
-                    $("#"+getid)[0].addEventListener('mousedown', mouseDown, false);
-                    $("#"+getid)[0].addEventListener('mouseup', mouseUp, false);
-                    $("#"+getid)[0].addEventListener('mousemove', mouseMove, false);
-                          
-                    var rect={},drag=false;
-                          
-                    function mouseDown(e){
-                        rect.startX=(e.pageX - this.offsetLeft);
-                        rect.startY=(e.pageY - this.offsetTop);
-                        drag=true;
-                    }
-
-                    function mouseUp(){
-                        drag=false;
-                        console.log(rect.w*rect.h);//矩形面积
-                        area=rect.w*rect.h;
-                        canvaslist[getid-1]=area;
-                        alert(canvaslist[getid-1]);
-                    }
-                          
-                    function mouseMove(e){
-                        if(drag){
-                            rect.w=(e.pageX-this.offsetLeft)-rect.startX;
-                            rect.h=(e.pageY-this.offsetTop)-rect.startY ;
-                            ctx.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
-                            drawRect("stroke");
-                        }
-                    }
-                          
-                    function drawRect(style){
-                        if(style==="fill"){
-                            ctx.fillRect(rect.startX, rect.startY, rect.w, rect.h);
-                        } 
-                        if(style==="stroke"){
-                            ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
+                    alert(2);
+                    function InitThis(){
+                        var ctx=$("#"+getid)[0].getContext('2d');
+                        //myCanvas.width = window.innerWidth;
+                        //myCanvas.height = window.innerHeight;
                               
+                        var rect={},drag=false;
+                              
+                        $("#"+getid).mousedown(function (e){
+                            rect.startX=(e.pageX - this.offsetLeft);
+                            rect.startY=(e.pageY - this.offsetTop);
+                            drag=true;
+                        });
+
+                        $("#"+getid).mouseup(function (e){
+                            drag=false;
+                            console.log(rect.w*rect.h);//矩形面积
+                            area=rect.w*rect.h;
+                            canvaslist[getid-1]=area;
+                            alert(canvaslist[getid-1]);
+                        });
+                              
+                        $("#"+getid).mousemove(function(e){
+                            if(drag){
+                                rect.w=(e.pageX-this.offsetLeft)-rect.startX;
+                                rect.h=(e.pageY-this.offsetTop)-rect.startY ;
+                                ctx.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
+                                drawRect("stroke");
+                            }
+                        });
+                              
+                        function drawRect(style){
+                            if(style==="fill"){
+                                ctx.fillRect(rect.startX, rect.startY, rect.w, rect.h);
+                            } 
+                            if(style==="stroke"){
+                                ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
+                                  
+                            }
                         }
-                    }
-                          
-                    function drawScreen(){
-                        ctx.lineWidth=1;
-                        ctx.strokeStyle="#f36";  
+                              
+                        function drawScreen(){
+                            ctx.lineWidth=1;
+                            ctx.strokeStyle="#f36";  
+                        }
+
+                        drawScreen();
                     }
 
-                    drawScreen();
+                    InitThis();
                 });
                 
             
