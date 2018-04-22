@@ -110,14 +110,33 @@
             background-color:white;
             outline:none;
         }
+        #theform{
+            display:none;
+        }
     </style>
 </head>
 <body>
     <div class="buttonbox">
-        <button class="buttonone">提交结果</button>
-        <a href="set.html"><button class="buttonone">下一步</button></a>
+        <button class="buttonone" id="steptwo">下一步</button>
+        <button class="buttonone" id="stepfin">完成</button>
         <input type="file" class="inputone" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg" onchange="upImg(this)"></input>
     </div>
+    <form id="theform" action="" method="POST" target="_blank" accept-charset="UTF-8" autocomplete="off" novalidate>
+        <fieldset>
+        <legend>Personal information:</legend>
+        <!--<br>
+        姓名:<input type="text" name="firstname"></input>
+        <br><br>
+        肿瘤类型:
+        <input type="radio" name="ztype" value="良性肿瘤" checked>良性肿瘤</input>
+        <input type="radio" name="ztype" value="恶性肿瘤" >恶性肿瘤</input>
+        <br><br>
+        手术日期:<input type="date" name="sday">
+        <br><br>
+        <input type="submit" value="Submit">
+        <br>-->
+        </fieldset>
+    </form>
     <div id="box">
         <!--<canvas id="myCanvas" class="classCanvas" width="600" height="300">
 
@@ -126,7 +145,7 @@
         <script src="jquery-3.2.1.min.js"></script>
         <script>
         window.onload=function(){
-        
+            
         function createCanvas(){
             var clicksign=0;//点击标志，是否可以再次触发Canvas点击事件
             var getid;//Cnavas的标号
@@ -134,8 +153,8 @@
             var area=0;//圈出的面积
             var volume=0;//肿瘤体积
             var thisid;
-
             var numofpic=prompt("请输入上传的图片张数","9");
+            
             if(numofpic<=0||numofpic>50)
                 alert("输入错误");
             for(var i=1;i<=numofpic;i++){
@@ -143,9 +162,23 @@
                 $("#box").append(createc);
                 createc.attr("id","Canvas"+i);
             }//生成与需要标注的图像张数相同的canvas
+            var thenumofpic=parseInt(numofpic);//强制类型转换
+            
             if(numofpic==1){
                 $("#Canvas1").css("border-color","red");
             }
+            else if(numofpic%2==0){
+                $("#Canvas1").css("border-color","red");
+                $("#Canvas"+thenumofpic/2).css("border-color","red");
+                $("#Canvas"+(thenumofpic/2+1)).css("border-color","red");
+                $("#Canvas"+numofpic).css("border-color","red");
+            }
+            else if(numofpic%2==1){
+                $("#Canvas1").css("border-color","red");
+                $("#Canvas"+(thenumofpic+1)/2).css("border-color","red");
+                $("#Canvas"+numofpic).css("border-color","red");
+            }
+
             
             $("canvas").click(function(e){
                 if(clicksign==0){
@@ -208,7 +241,9 @@
                     returntools.id="returntool";
                     returntools.innerHTML="返回";
                     tools.appendChild(returntools);
-                    
+                
+                var ctx=$("#"+getid)[0].getContext('2d');
+
                 //设置Canvas的left和top
                 $("#"+getid).css("z-index","501")
                             .css("left","400px")
@@ -391,8 +426,58 @@
             
             }
 
+            $("#steptwo").click(function(){//标记肿瘤种类函数
 
-           
+                var sWidth=document.body.scrollWidth;//获取整个页面宽度
+                var sHeight=document.body.scrollHeight;//获取整个页面高度
+                var wHeight=document.documentElement.clientHeight;//获取页面的可视区域高度
+                var oMask=document.createElement("div");
+                    oMask.id="canvasbg";
+                    oMask.style.height=sHeight+"px";
+                    oMask.style.width=sWidth+"px";
+                    document.body.appendChild(oMask);//弹出悬浮层
+                var oform=document.createElement("form");
+                    oMask.id="theform";
+                    oMask.style.height=sHeight+"px";
+                    oMask.style.width=sWidth+"px";
+
+                if (window.XMLHttpRequest){
+                    xmlhttp=new XMLHttpRequest();
+                }
+                else{
+                    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                xmlhttp.open("GET","savedata.xml",false);
+                xmlhttp.send();
+                xmlDoc=xmlhttp.responseXML; 
+                x=xmlDoc.getElementsByTagName("INPUT");
+
+                /*thetypename=(x[i].getElementsByTagName("TYPENAME")[0].childNodes[0].nodeValue);
+                thetype=(x[i].getElementsByTagName("TYPE")[0].childNodes[0].nodeValue);
+                thename=(x[i].getElementsByTagName("NAME")[0].childNodes[0].nodeValue);
+                thevalue=(x[i].getElementsByTagName("VALUE")[0].childNodes[0].nodeValue);
+                thetext=(x[i].getElementsByTagName("TEXT")[0].childNodes[0].nodeValue);
+                numofbr=(x[i].getElementsByTagName("NUMOFBR")[0].childNodes[0].nodeValue);*/
+
+                for(var i=0;i<x.length;i++){
+                    $("#theform").append(x[i].getElementsByTagName("TYPENAME")[0].childNodes[0].nodeValue);
+                    var createc=$("<input>");
+                    $("#theform").append(createc);
+                    createc.attr("id","theinput");
+                    createc.attr("type",x[i].getElementsByTagName("TYPE")[0].childNodes[0].nodeValue);
+                    createc.attr("name",x[i].getElementsByTagName("NAME")[0].childNodes[0].nodeValue);
+                    createc.attr("value",x[i].getElementsByTagName("VALUE")[0].childNodes[0].nodeValue);
+                    $("#theform").append(x[i].getElementsByTagName("TEXT")[0].childNodes[0].nodeValue);
+                    $("#theform").append("</input>");
+                    for(var j=0;j<x[i].getElementsByTagName("NUMOFBR")[0].childNodes[0].nodeValue;j++){
+                        $("#theform").append("<br>");
+                    }
+                }
+            });
+
+            $("#stepfin").click(function(){//完成操作
+
+            });
 
 
             /*function createImage(){
@@ -420,8 +505,9 @@
         }
         
         createCanvas();
+
         
-    }
+        }
     </script>
 </body>
 </html>
