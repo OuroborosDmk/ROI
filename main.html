@@ -117,6 +117,45 @@
             height:800px;
             border:2px solid black;
         }
+        #thefin{
+            display:none;
+            width:700px;
+            height:800px;
+            border:2px solid black;
+        }
+        #thefin p:nth-child(1){
+            font-size:30px;
+            margin-left:50px;
+            margin-top:20px;
+        }
+        #thefin p:nth-child(3){
+            font-size:20px;
+            margin-top:50px;
+            margin-left:100px;
+        }
+        #fintable{
+            border:2px solid black;
+            margin-left:100px;
+            margin-top:50px;
+        }
+        #fintable td{
+            width:100px;
+            height:50px;
+        }
+        #finreturn{
+            border-radius:5px;
+            margin-left:150px;
+            margin-top:50px;
+            background-color:#F8F8F8;
+            width:100px;
+            height:30px;
+            font-size:15px;
+            color:black;
+            outline:none;
+        }
+        #finreturn:hover{
+            border:1px solid black;
+        }
     </style>
 </head>
 <body>
@@ -141,6 +180,21 @@
         <br>-->
         </fieldset>
     </form>
+    <div id="thefin">
+        <p>最终结果:</p>
+        <table id="fintable">
+            <tr>
+                <th>影像编码</th>
+                <th>标记面积</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1000</td>
+            </tr>
+        </table>
+        <p>肿瘤总体积经计算为:<span id="finspan">&nbsp;&nbsp;&nbsp;&nbsp;</span>.</p>
+        <button id="finreturn">返回</button>
+    </div>
     <div id="box">
         <!--<canvas id="myCanvas" class="classCanvas" width="600" height="300">
 
@@ -156,8 +210,10 @@
             var canvaslist=new Array();//储存圈出的面积
             var area=0;//圈出的面积
             var volume=0;//肿瘤体积
-            var thisid;
+            //var thisid;
             var numofpic=prompt("请输入上传的图片张数","9");
+            var theformyon=0;//肿瘤类型按钮是否可用,0为可用
+            var thetableyon=0;//显示结果类型按钮是否可用,0为可用
             
             if(numofpic<=0||numofpic>50)
                 alert("输入错误");
@@ -254,37 +310,53 @@
                             .css("top","50px")
                             .css("margin-left","0")
                             .css("margin-top","0")
-                            .css("position","fixed");
+                            .css("position","fixed")
+                            .css("background-image","url(./data_du/YU_GUI_QING.bmp)");
                             //.css("float","left");
                 $("#"+getid).attr("width","704px")
                             .attr("height","701px");//Canvas的高宽不能通过CSS设置，只能通过属性直接设置
+                            
+                /*var imgObj = new Image();
+                imgObj.src = "./data_du/YU_GUI_QING.bmp";
+                //待图片加载完后，将其显示在canvas上
+                imgObj.onload = function(){
+                    var ctx=$("#"+getid)[0].getContext('2d');
+                    ctx.drawImage(this, 0, 0);//this即是imgObj,保持图片的原始大小：470*480
+                    //ctx.drawImage(this, 0, 0,1024,768);//改变图片的大小到1024*768
+                }*/
 
             
                 //点击return关闭Canvas
                 $("#returntool").click(function(){
                     var returnsign=confirm("确认返回？");
                     if(returnsign==true){
+                        var cxt=$("#"+getid)[0].getContext("2d");
+                        cxt.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
                         document.body.removeChild(oMask);
                         document.body.removeChild(toolbox);
                         $("#"+getid).css("z-index","auto")
                                     .css("margin-left","300px")
                                     .css("margin-top","50px")
+                                    .css("background-image","none")
                                     .css("position","static");
                         $("#"+getid).attr("width","300px")
                                     .attr("height","150px");
                         clicksign=0;
+
                     }
                 });
 
                 $("#savetool").click(function(){//保存标注结果
                     var ctx=$("#"+getid)[0].getContext('2d');
-                    ctx.save();
+                    var image = new Image();
+                    image.src = $("#"+getid)[0].toDataURL("./data_du/001.bmp");
                     alert("保存成功！");
                 });
 
                 $("#cleartool").click(function(){//清除标注痕迹
                     var cxt=$("#"+getid)[0].getContext("2d");  
-                    cxt.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height); 
+                    cxt.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
+
                     alert("清除成功！");
                 });
 
@@ -375,7 +447,7 @@
                 $("#rectangletool").click(function(){//用矩形线标注图像//修改监听事件
                     //var myCanvas=$("#canvas"+i); 
                     //console.log(myCanvas);
-                    alert(2);
+                    
                     function InitThis(){
                         var ctx=$("#"+getid)[0].getContext('2d');
                         //myCanvas.width = window.innerWidth;
@@ -436,6 +508,8 @@
             }
 
             $("#steptwo").click(function(){//标记肿瘤种类函数
+
+
 
                 /*var sWidth=document.body.scrollWidth;//获取整个页面宽度
                 var sHeight=document.body.scrollHeight;//获取整个页面高度
@@ -499,7 +573,23 @@
             });
 
             $("#stepfin").click(function(){//完成操作
+                $("#thefin").css("display","block")
+                            .css("z-index","600")
+                            .css("position","absolute")
+                            .css("background-color","white")
+                            .css("left","400px")
+                            .css("top","50px");
 
+                for(var i=0;i<canvaslist.length;i++){//输出储存面积数组中的值
+                    if(canvaslist[i]!=0){
+
+                    }
+                }
+
+                $("#finreturn").click(function(){
+                    $("#thefin").css("z-index","1")
+                               .css("display","none");
+                });
             });
 
 
