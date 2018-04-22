@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <title>ROI</title>
+    <meta charset="utf-8"/>
     <style type="text/css">
         *{
             border:0;
@@ -25,7 +26,7 @@
             background-color:#F8F8F8;
             width:100px;
             height:30px;
-            font-size:20px;
+            font-size:15px;
             color:black;
             outline:none;
         }
@@ -112,14 +113,17 @@
         }
         #theform{
             display:none;
+            width:1400px;
+            height:800px;
+            border:2px solid black;
         }
     </style>
 </head>
 <body>
     <div class="buttonbox">
-        <button class="buttonone" id="steptwo">下一步</button>
-        <button class="buttonone" id="stepfin">完成</button>
-        <input type="file" class="inputone" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg" onchange="upImg(this)"></input>
+        <button class="buttonone" id="steptwo">肿瘤类型判断</button>
+        <button class="buttonone" id="stepfin">完成操作</button>
+        <!--<input type="file" class="inputone" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg" onchange="upImg(this)"></input>-->
     </div>
     <form id="theform" action="" method="POST" target="_blank" accept-charset="UTF-8" autocomplete="off" novalidate>
         <fieldset>
@@ -426,21 +430,29 @@
             
             }
 
+            function forminput(){
+                alert("提交成功");
+                return false;
+            }
+
             $("#steptwo").click(function(){//标记肿瘤种类函数
 
-                var sWidth=document.body.scrollWidth;//获取整个页面宽度
+                /*var sWidth=document.body.scrollWidth;//获取整个页面宽度
                 var sHeight=document.body.scrollHeight;//获取整个页面高度
                 var wHeight=document.documentElement.clientHeight;//获取页面的可视区域高度
                 var oMask=document.createElement("div");
                     oMask.id="canvasbg";
                     oMask.style.height=sHeight+"px";
                     oMask.style.width=sWidth+"px";
-                    document.body.appendChild(oMask);//弹出悬浮层
-                var oform=document.createElement("form");
-                    oMask.id="theform";
-                    oMask.style.height=sHeight+"px";
-                    oMask.style.width=sWidth+"px";
+                    document.body.appendChild(oMask);//弹出悬浮层*/
 
+                $("#theform").css("display","block")
+                             .css("z-index","600")
+                             .css("position","absolute")
+                             .css("background-color","white")
+                             .css("left","70px")
+                             .css("top","150px");
+                        
                 if (window.XMLHttpRequest){
                     xmlhttp=new XMLHttpRequest();
                 }
@@ -463,16 +475,27 @@
                     $("#theform").append(x[i].getElementsByTagName("TYPENAME")[0].childNodes[0].nodeValue);
                     var createc=$("<input>");
                     $("#theform").append(createc);
-                    createc.attr("id","theinput");
+                    //createc.attr("id","theinput");
                     createc.attr("type",x[i].getElementsByTagName("TYPE")[0].childNodes[0].nodeValue);
                     createc.attr("name",x[i].getElementsByTagName("NAME")[0].childNodes[0].nodeValue);
                     createc.attr("value",x[i].getElementsByTagName("VALUE")[0].childNodes[0].nodeValue);
+                    if(createc.attr("type")=="submit"){
+                        createc.attr("id","theinput");//提交按钮的id为theinput
+                    }
                     $("#theform").append(x[i].getElementsByTagName("TEXT")[0].childNodes[0].nodeValue);
                     $("#theform").append("</input>");
                     for(var j=0;j<x[i].getElementsByTagName("NUMOFBR")[0].childNodes[0].nodeValue;j++){
                         $("#theform").append("<br>");
                     }
                 }
+
+                $("#theinput").click(function(){
+                    $("#theform").html(" ");//清除原表单中所有信息
+                    $("#theform").css("z-index","1")
+                                 .css("display","none");
+                    return forminput();//return 阻止表单提交,需要表单提交时去掉return
+                   
+                });
             });
 
             $("#stepfin").click(function(){//完成操作
