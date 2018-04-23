@@ -164,7 +164,7 @@
 <body>
     <div class="buttonbox">
         <button class="buttonone" id="steptwo">肿瘤类型判断</button>
-        <button class="buttonone" id="stepfin">完成操作</button>
+        <button class="buttonone" id="stepfin">查看结果</button>
         <!--<input type="file" class="inputone" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg" onchange="upImg(this)"></input>-->
     </div>
     <form id="theform" action="" method="POST" target="_blank" accept-charset="UTF-8" autocomplete="off" novalidate>
@@ -186,10 +186,6 @@
     <div id="thefin">
         <p>最终结果:</p>
         <table id="fintable">
-            <tr>
-                <th>影像编码</th>
-                <th>标记面积</th>
-            </tr>
         </table>
         <p>肿瘤总体积经计算为:<span id="finspan">&nbsp;&nbsp;&nbsp;&nbsp;</span>.</p>
         <button id="finreturn">返回</button>
@@ -473,7 +469,6 @@
                             numofid=numofid.replace(/Canvas/,"");
                             numofid=parseInt(numofid);
                             canvaslist[numofid-1]=area;
-                            alert(numofid-1);
                             alert(canvaslist[numofid-1]);
                         });
                               
@@ -497,8 +492,8 @@
                         }
                               
                         function drawScreen(){
-                            ctx.lineWidth=1;
-                            ctx.strokeStyle="#f36";  
+                            ctx.lineWidth=0.5;
+                            ctx.strokeStyle="#FFFFFF";
                         }
 
                         drawScreen();
@@ -533,7 +528,7 @@
                              .css("position","absolute")
                              .css("background-color","white")
                              .css("left","70px")
-                             .css("top","150px");
+                             .css("top","50px");
                         
                 if (window.XMLHttpRequest){
                     xmlhttp=new XMLHttpRequest();
@@ -588,6 +583,7 @@
                             .css("background-color","white")
                             .css("left","400px")
                             .css("top","50px");
+                $("#fintable").append("<tr><th>影像编码</th><th>标记面积</th></tr>");
 
                 var ilist=new Array();//储存操作过的图像序号
                 var mlist=new Array();//储存操作过的图像面积
@@ -600,13 +596,16 @@
                 }
 
                 for(var j=0;j<ilist.length;j++){
-                    $("#fintable").append("<tr><td>"+ilist[j]+"</td><td>"+mlist[j]+"</td></tr>");
+                    $("#fintable").append("<tr><td>"+ilist[j]+"</td><td>"+mlist[j]+"</td></tr>");//输出结果表格
 
                 }
 
+                //$("#finspan").html(volume);//输出肿瘤体积
+
                 $("#finreturn").click(function(){
+                    $("#fintable").html(" ");//清除原表格中所有信息
                     $("#thefin").css("z-index","1")
-                               .css("display","none");
+                                .css("display","none");
                 });
             });
 
