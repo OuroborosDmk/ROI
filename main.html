@@ -134,13 +134,13 @@
             margin-left:100px;
         }
         #fintable{
-            border:2px solid black;
             margin-left:100px;
             margin-top:50px;
         }
         #fintable td{
             width:100px;
             height:50px;
+            text-align:center;
         }
         #finreturn{
             border-radius:5px;
@@ -155,6 +155,9 @@
         }
         #finreturn:hover{
             border:1px solid black;
+        }
+        table,th,td{
+            border: 1px solid blue;
         }
     </style>
 </head>
@@ -187,10 +190,6 @@
                 <th>影像编码</th>
                 <th>标记面积</th>
             </tr>
-            <tr>
-                <td>1</td>
-                <td>1000</td>
-            </tr>
         </table>
         <p>肿瘤总体积经计算为:<span id="finspan">&nbsp;&nbsp;&nbsp;&nbsp;</span>.</p>
         <button id="finreturn">返回</button>
@@ -207,22 +206,27 @@
         function createCanvas(){
             var clicksign=0;//点击标志，是否可以再次触发Canvas点击事件
             var getid;//Cnavas的标号
-            var canvaslist=new Array();//储存圈出的面积
             var area=0;//圈出的面积
             var volume=0;//肿瘤体积
             //var thisid;
             var numofpic=prompt("请输入上传的图片张数","9");
             var theformyon=0;//肿瘤类型按钮是否可用,0为可用
             var thetableyon=0;//显示结果类型按钮是否可用,0为可用
+            var thenumofpic=parseInt(numofpic);//强制类型转换
             
-            if(numofpic<=0||numofpic>50)
+            if(thenumofpic<=0||thenumofpic>50)
                 alert("输入错误");
-            for(var i=1;i<=numofpic;i++){
+            for(var i=1;i<=thenumofpic;i++){
                 var createc=$("<canvas></canvas>");
                 $("#box").append(createc);
                 createc.attr("id","Canvas"+i);
             }//生成与需要标注的图像张数相同的canvas
-            var thenumofpic=parseInt(numofpic);//强制类型转换
+            
+            var canvaslist=new Array(thenumofpic);//储存圈出的面积
+            for(var i=0;i<thenumofpic;i++){
+                canvaslist[i]=0;
+            }//初始化数组为0
+            console.log(canvaslist.length);
             
             if(numofpic==1){
                 $("#Canvas1").css("border-color","red");
@@ -302,7 +306,7 @@
                     returntools.innerHTML="返回";
                     tools.appendChild(returntools);
                 
-                var ctx=$("#"+getid)[0].getContext('2d');
+                //var ctx=$("#"+getid)[0].getContext('2d');
 
                 //设置Canvas的left和top
                 $("#"+getid).css("z-index","501")
@@ -465,8 +469,12 @@
                             drag=false;
                             console.log(rect.w*rect.h);//矩形面积
                             area=rect.w*rect.h;
-                            canvaslist[getid-1]=area;
-                            alert(canvaslist[getid-1]);
+                            var numofid=String(getid);
+                            numofid=numofid.replace(/Canvas/,"");
+                            numofid=parseInt(numofid);
+                            canvaslist[numofid-1]=area;
+                            alert(numofid-1);
+                            alert(canvaslist[numofid-1]);
                         });
                               
                         $("#"+getid).mousemove(function(e){
@@ -573,6 +581,7 @@
             });
 
             $("#stepfin").click(function(){//完成操作
+
                 $("#thefin").css("display","block")
                             .css("z-index","600")
                             .css("position","absolute")
@@ -580,10 +589,19 @@
                             .css("left","400px")
                             .css("top","50px");
 
-                for(var i=0;i<canvaslist.length;i++){//输出储存面积数组中的值
-                    if(canvaslist[i]!=0){
+                var ilist=new Array();//储存操作过的图像序号
+                var mlist=new Array();//储存操作过的图像面积
 
+                for(var i=0;i<thenumofpic;i++){//输出储存面积数组中的值
+                    if(canvaslist[i]!=0){
+                        ilist.push(i+1);
+                        mlist.push(canvaslist[i]);
                     }
+                }
+
+                for(var j=0;j<ilist.length;j++){
+                    $("#fintable").append("<tr><td>"+ilist[j]+"</td><td>"+mlist[j]+"</td></tr>");
+
                 }
 
                 $("#finreturn").click(function(){
