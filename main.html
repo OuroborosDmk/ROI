@@ -411,31 +411,39 @@
                         var ctx=$("#"+getid)[0].getContext('2d');
                               
                         var rect={},drag=false;
+                        var rx,ry,r;//rx,xy均为坐标,r为半径
                         
                         $("#"+getid).mousedown(function (e){
                             x = e.offsetX;
                             y = e.offsetY;
+                            drag=true;
                         });
 
                         $("#"+getid).mouseup(function (e){
+                            area=3.14*Math.pow(r,2);
+                            var numofid=String(getid);
+                            numofid=numofid.replace(/Canvas/,"");
+                            numofid=parseInt(numofid);
+                            canvaslist[numofid-1]=area;
+                            alert(canvaslist[numofid-1]);
                             drag=false;
                         });
 
                         $("#"+getid).mousemove(function (e){
                             if(drag){
-                                ctx.clearRect(0,0,canvas.width,canvas.height);
+                                ctx.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
                                 ctx.beginPath();
-                                var rx=(e.offsetX-x)/2;
-                                var ry=(e.offsetY-y)/2;
-                                var r=Math.sqrt(rx*rx+ry*ry);
+                                rx=(e.offsetX-x)/2;
+                                ry=(e.offsetY-y)/2;
+                                r=Math.sqrt(rx*rx+ry*ry);
                                 ctx.arc(rx+x,ry+y,r,0,Math.PI*2);
                                 ctx.stroke();
                             }
                         });
 
                         function drawScreen(){
-                            ctx.lineWidth=1;
-                            ctx.strokeStyle="#f36";  
+                            ctx.lineWidth=0.5;
+                            ctx.strokeStyle="#FFFFFF";  
                         }
 
                         drawScreen();
