@@ -261,6 +261,10 @@
                 }//医学影像资料张数为奇数
             }
 
+            function matrix(){//储存矩阵结果
+
+            }
+
             function openNew(){//悬浮层弹出，还原canvas大小
                 clicksign=1;
                 var sWidth=document.body.scrollWidth;//获取整个页面宽度
@@ -379,7 +383,8 @@
                             }
                         });
                      
-                        $("#"+getid).mouseup(function (e) {
+                        $("#"+getid).mouseup(function (e){
+                            
                             mousePressed = false;
                         });
                         $("#"+getid).mouseleave(function (e) {
@@ -401,7 +406,7 @@
                         lastX = x; lastY = y;
                     }
 
-                    InitThis();
+                    InitThis(); 
                 })
 
                 $("#circletool").click(function(){//用圆线标注图像
@@ -438,15 +443,11 @@
                                 r=Math.sqrt(rx*rx+ry*ry);
                                 ctx.arc(rx+x,ry+y,r,0,Math.PI*2);
                                 ctx.stroke();
+                                ctx.lineWidth=0.5;
+                                ctx.strokeStyle="#FFFFFF"; 
                             }
                         });
 
-                        function drawScreen(){
-                            ctx.lineWidth=0.5;
-                            ctx.strokeStyle="#FFFFFF";  
-                        }
-
-                        drawScreen();
                     }
 
                     InitThis();
@@ -483,28 +484,14 @@
                         $("#"+getid).mousemove(function(e){
                             if(drag){
                                 rect.w=(e.pageX-this.offsetLeft)-rect.startX;
-                                rect.h=(e.pageY-this.offsetTop)-rect.startY ;
+                                rect.h=(e.pageY-this.offsetTop)-rect.startY;
                                 ctx.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
-                                drawRect("stroke");
+                                ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
+                                ctx.lineWidth=0.5;
+                                ctx.strokeStyle="#FFFFFF";
                             }
                         });
                               
-                        function drawRect(style){
-                            if(style==="fill"){
-                                ctx.fillRect(rect.startX, rect.startY, rect.w, rect.h);
-                            } 
-                            if(style==="stroke"){
-                                ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
-                                  
-                            }
-                        }
-                              
-                        function drawScreen(){
-                            ctx.lineWidth=0.5;
-                            ctx.strokeStyle="#FFFFFF";
-                        }
-
-                        drawScreen();
                     }
 
                     InitThis();
