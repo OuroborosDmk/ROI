@@ -209,9 +209,39 @@
             var theformyon=0;//肿瘤类型按钮是否可用,0为可用
             var thetableyon=0;//显示结果类型按钮是否可用,0为可用
             var thenumofpic=parseInt(numofpic);//强制类型转换
+            var savearray=new Array();//暂时储存结果矩阵
+            var allarray=new Array();
+
+            for(var i=0;i<704;i++){
+                savearray[i]=new Array();
+            }
+
+            for(var i=0;i<704;i++){
+                for(var j=0;j<701;j++){
+                    savearray[i][j]=0;
+                }
+            }
             
             if(thenumofpic<=0||thenumofpic>50)
                 alert("输入错误");
+
+            for(var i=0;i<thenumofpic;i++){
+                allarray[i]=new Array();
+                for(var j=0;j<704;j++){
+                    allarray[i][j]=new Array();
+                }
+            }
+
+            for(var i=0;i<thenumofpic;i++){
+                for(var j=0;j<704;j++){
+                    for(var k=0;k<701;k++){
+                        allarray[i][j][k]=0;
+                    }
+                }
+            }
+
+            //alert(allarray[1][2][3]);//测试数组
+
             for(var i=1;i<=thenumofpic;i++){
                 var createc=$("<canvas></canvas>");
                 $("#box").append(createc);
@@ -384,7 +414,6 @@
                         });
                      
                         $("#"+getid).mouseup(function (e){
-                            
                             mousePressed = false;
                         });
                         $("#"+getid).mouseleave(function (e) {
@@ -430,7 +459,7 @@
                             numofid=numofid.replace(/Canvas/,"");
                             numofid=parseInt(numofid);
                             canvaslist[numofid-1]=area;
-                            alert(canvaslist[numofid-1]);
+                            //alert(canvaslist[numofid-1]);
                             drag=false;
                         });
 
@@ -472,13 +501,15 @@
 
                         $("#"+getid).mouseup(function (e){
                             drag=false;
-                            console.log(rect.w*rect.h);//矩形面积
+                            //console.log(rect.w*rect.h);//矩形面积
+                            //alert(rect.startX+rect.w);
+                            //alert(rect.startY+rect.h);
                             area=rect.w*rect.h;
                             var numofid=String(getid);
                             numofid=numofid.replace(/Canvas/,"");
                             numofid=parseInt(numofid);
                             canvaslist[numofid-1]=area;
-                            alert(canvaslist[numofid-1]);
+                            //alert(canvaslist[numofid-1]);
                         });
                               
                         $("#"+getid).mousemove(function(e){
