@@ -528,7 +528,7 @@
                             if(drag){
                                 rect.w=(e.pageX-this.offsetLeft)-rect.startX;
                                 rect.h=(e.pageY-this.offsetTop)-rect.startY;
-                                ctx.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
+                                ctx.clearRect(rect.startX,rect.startY,rect.w,rect.h);
                                 ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
                                 ctx.lineWidth=0.5;
                                 ctx.strokeStyle="#FFFFFF";
