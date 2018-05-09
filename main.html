@@ -379,7 +379,8 @@
                 });
 
                 $("#cleartool").click(function(){//清除标注痕迹
-                    var cxt=$("#"+getid)[0].getContext("2d");  
+                    var cxt=$("#"+getid)[0].getContext("2d");
+                    arr=[];
                     cxt.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
 
                 });
@@ -388,6 +389,9 @@
                     var mousePressed=false;
                     var lastX,lastY;
                     var ctx;
+                    var startX,startY;
+                    var coordinateX=new Array();
+                    var coordinateY=new Array();
                      
                     function InitThis() {
                         ctx=$("#"+getid)[0].getContext('2d');
@@ -395,19 +399,38 @@
                         $("#"+getid).mousedown(function(e){
                             mousePressed=true;
                             Draw(e.pageX-$(this).offset().left,e.pageY-$(this).offset().top,false);
+                            coordinateX=[];
+                            coordinateY=[];
+                            coordinateX.push(e.pageX-$(this).offset().left);
+                            coordinateY.push(e.pageY-$(this).offset().top);
+                            startX=e.pageX-$(this).offset().left;
+                            startY=e.pageY-$(this).offset().top;
                         });
                      
                         $("#"+getid).mousemove(function(e){
                             if(mousePressed){
+                                coordinateX.push(e.pageX-$(this).offset().left);
+                                coordinateY.push(e.pageY-$(this).offset().top);
                                 Draw(e.pageX-$(this).offset().left,e.pageY-$(this).offset().top,true);
                             }
                         });
                      
                         $("#"+getid).mouseup(function(e){
                             mousePressed=false;
-                            arr.push(ctx.getImageData(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height));
                             
+                            if(parseInt(startX)!=parseInt(lastX)||parseInt(startY)!=parseInt(lastY)){
+                                ctx.beginPath();
+                                ctx.moveTo(lastX,lastY);
+                                ctx.lineTo(startX,startY);
+                                ctx.strokeStyle="#f36";
+                                ctx.lineWidth=1;
+                                ctx.lineJoin="round";
+                                ctx.closePath();
+                                ctx.stroke();
+                            }
+                            arr.push(ctx.getImageData(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height));
                         });
+
                         $("#"+getid).mouseleave(function(e){
                             mousePressed=false;
                         });
