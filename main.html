@@ -12,7 +12,7 @@
         canvas{
             border:1px solid black;
             margin-top:50px;
-            margin-left:300px;
+            margin-left:150px;
         }
         .buttonbox{
             width:100%;
@@ -95,7 +95,7 @@
             background-color:white;
             outline:none;
         }
-        #savetool{
+        #revoketool{
             display:block;
             width:50px;
             height:50px;
@@ -213,6 +213,7 @@
             var allarray=new Array();//储存所有结果矩阵的大数组
             var canvaswith=704;
             var canvasheight=701;
+            var arr=[];
             
             if(thenumofpic<=0||thenumofpic>50)
                 alert("输入错误");
@@ -265,7 +266,6 @@
             $("canvas").click(function(e){
                 if(clicksign==0){
                     getid=$(e.target).attr('id'); 
-                    alert(getid);
 
                     openNew();
                 }
@@ -281,10 +281,6 @@
                 else if(numofpic%2==1){
 
                 }//医学影像资料张数为奇数
-            }
-
-            function matrix(){//储存矩阵结果
-
             }
 
             function openNew(){//悬浮层弹出，还原canvas大小
@@ -319,10 +315,10 @@
                     cleartools.id="cleartool";
                     cleartools.innerHTML="清除";
                     tools.appendChild(cleartools);
-                var savetools=document.createElement("button");
-                    savetools.id="savetool";
-                    savetools.innerHTML="保存";
-                    tools.appendChild(savetools);
+                var revoketools=document.createElement("button");
+                    revoketools.id="revoketool";
+                    revoketools.innerHTML="撤销";
+                    tools.appendChild(revoketools);
                 var returntools=document.createElement("button");
                     returntools.id="returntool";
                     returntools.innerHTML="返回";
@@ -372,18 +368,20 @@
                     }
                 });
 
-                $("#savetool").click(function(){//保存标注结果
+                $("#revoketool").click(function(){//撤销上次操作
                     var ctx=$("#"+getid)[0].getContext('2d');
-                    var image = new Image();
-                    image.src = $("#"+getid)[0].toDataURL("./data_du/001.bmp");
-                    alert("保存成功！");
+                    
+                    arr.pop();
+                    ctx.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
+                    if(arr.length>0){
+                        ctx.putImageData(arr[arr.length-1],0,0,0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
+                    }
                 });
 
                 $("#cleartool").click(function(){//清除标注痕迹
                     var cxt=$("#"+getid)[0].getContext("2d");  
                     cxt.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
 
-                    alert("清除成功！");
                 });
 
                 $("#othertool").click(function(){//用不规则线标注图像
@@ -407,14 +405,16 @@
                      
                         $("#"+getid).mouseup(function(e){
                             mousePressed=false;
+                            arr.push(ctx.getImageData(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height));
+                            
                         });
                         $("#"+getid).mouseleave(function(e){
                             mousePressed=false;
                         });
                     }
                      
-                    function Draw(x,y,isDown) {
-                        if (isDown) {
+                    function Draw(x,y,isDown){
+                        if (isDown){
                             ctx.beginPath();
                             ctx.strokeStyle="#f36";
                             ctx.lineWidth=1;
@@ -453,6 +453,8 @@
                             canvaslist[numofid-1]=area;
                             //alert(canvaslist[numofid-1]);
                             drag=false;
+                            arr.push(ctx.getImageData(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height));
+
 
                             var roundx=Math.ceil(rx+x);//圆心x坐标取整
                             var roundy=Math.ceil(ry+y);//圆心y坐标取整
@@ -473,6 +475,9 @@
                         $("#"+getid).mousemove(function(e){
                             if(drag){
                                 ctx.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
+                                if(arr.length!=0){
+                                    ctx.putImageData(arr[arr.length-1],0,0,0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
+                                 }
                                 ctx.beginPath();
                                 rx=(e.offsetX-x)/2;
                                 ry=(e.offsetY-y)/2;
@@ -504,10 +509,14 @@
                             rect.startX=(e.pageX-this.offsetLeft);
                             rect.startY=(e.pageY-this.offsetTop);
                             drag=true;
+                            
+                            
+                            
                         });
 
                         $("#"+getid).mouseup(function(e){
                             drag=false;
+                            arr.push(ctx.getImageData(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height));
                             //console.log(rect.w*rect.h);//矩形面积
                             //alert(rect.startX+rect.w);
                             //alert(rect.startY+rect.h);
@@ -528,7 +537,10 @@
                             if(drag){
                                 rect.w=(e.pageX-this.offsetLeft)-rect.startX;
                                 rect.h=(e.pageY-this.offsetTop)-rect.startY;
-                                ctx.clearRect(rect.startX,rect.startY,rect.w,rect.h);
+                                ctx.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
+                                if(arr.length!=0){
+                                ctx.putImageData(arr[arr.length-1],0,0,0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
+                            }
                                 ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
                                 ctx.lineWidth=0.5;
                                 ctx.strokeStyle="#FFFFFF";
