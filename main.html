@@ -401,8 +401,8 @@
                             Draw(e.pageX-$(this).offset().left,e.pageY-$(this).offset().top,false);
                             coordinateX=[];
                             coordinateY=[];
-                            coordinateX.push(e.pageX-$(this).offset().left);
-                            coordinateY.push(e.pageY-$(this).offset().top);
+                            //coordinateX.push(e.pageX-$(this).offset().left);
+                            //coordinateY.push(e.pageY-$(this).offset().top);
                             startX=e.pageX-$(this).offset().left;
                             startY=e.pageY-$(this).offset().top;
                         });
@@ -428,6 +428,7 @@
                                 ctx.closePath();
                                 ctx.stroke();
                             }
+                            //alert(coordinateX.length);
                             arr.push(ctx.getImageData(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height));
                         });
 
@@ -446,6 +447,38 @@
                             ctx.lineTo(x,y);
                             ctx.closePath();
                             ctx.stroke();
+                        }
+                        if((parseInt(x)<parseInt(lastX))&&(parseInt(y)<parseInt(lastY))){
+                            for(var i=parseInt(lastX);i>parseInt(x);i--){
+                                coordinateX.push(i);
+                            }
+                            for(var j=parseInt(lastY);j>parseInt(y);j--){
+                                coordinateY.push(j);
+                            }
+                        }
+                        else if((parseInt(x)<parseInt(lastX))&&(parseInt(y)>parseInt(lastY))){
+                            for(var i=parseInt(lastX);i>parseInt(x);i--){
+                                coordinateX.push(i);
+                            }
+                            for(var j=parseInt(lastY);j<parseInt(y);j++){
+                                coordinateY.push(j);
+                            }
+                        }
+                        else if((parseInt(x)>parseInt(lastX))&&(parseInt(y)<parseInt(lastY))){
+                            for(var i=parseInt(lastX);i<parseInt(x);i++){
+                                coordinateX.push(i);
+                            }
+                            for(var j=parseInt(lastY);j>parseInt(y);j--){
+                                coordinateY.push(j);
+                            }
+                        }
+                        else if((parseInt(x)>parseInt(lastX))&&(parseInt(y)>parseInt(lastY))){
+                            for(var i=parseInt(lastX);i<parseInt(x);i++){
+                                coordinateX.push(i);
+                            }
+                            for(var j=parseInt(lastY);j<parseInt(y);j++){
+                                coordinateY.push(j);
+                            }
                         }
                         lastX=x; lastY=y;
                     }
