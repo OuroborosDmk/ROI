@@ -2,7 +2,7 @@
 # coding=utf-8
 
 import tornado.web
-import methods.readdb as end
+from methods.db import *
 
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):
@@ -11,5 +11,12 @@ class IndexHandler(tornado.web.RequestHandler):
     def post(self):
         username = self.get_argument("username")
         password = self.get_argument("password")
+        try:
+            sql = "INSERT INTO users(username,password) VALUES (" + username +","+ password +")"
+            cur.execute(sql)
+            conn.commit()
+
+        except:
+            conn.rollback()
         
         

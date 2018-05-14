@@ -1,5 +1,6 @@
 $(document).ready(function(){
 	$("#signup").click(function(){
+        alert("1");
         var user = $("#username").val();
         var pwd = $("#password").val();
         var pd = {"username":user, "password":pwd};

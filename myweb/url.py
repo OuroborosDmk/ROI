@@ -4,7 +4,7 @@
 the url structure of website
 """
 
-from handlers.login import IndexHandler    #假设已经有了
+from handlers.signup import IndexHandler    #假设已经有了
 
 url = [
     (r'/', IndexHandler),
