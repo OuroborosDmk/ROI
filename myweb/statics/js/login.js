@@ -9,7 +9,7 @@ $(document).ready(function(){
             data:pd,
             cache:false,
             success:function(data){
-                alert(data);
+                window.location.href = "/index";
             },
             error:function(){
                 alert("error!");

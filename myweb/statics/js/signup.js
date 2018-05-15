@@ -1,16 +1,15 @@
 $(document).ready(function(){
 	$("#signup").click(function(){
-        alert("1");
         var user = $("#username").val();
         var pwd = $("#password").val();
         var pd = {"username":user, "password":pwd};
         $.ajax({
             type:"post",
-            url:"/",
+            url:"/signup",
             data:pd,
             cache:false,
             success:function(data){
-                alert(data);
+                window.location.href = "/";
             },
             error:function(){
                 alert("error!");

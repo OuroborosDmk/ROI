@@ -4,7 +4,7 @@
 import tornado.web
 import methods.readdb as mrd
 
-class IndexHandler(tornado.web.RequestHandler):
+class LoginHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("login.html")
 
@@ -15,8 +15,8 @@ class IndexHandler(tornado.web.RequestHandler):
         if user_infos:
             db_pwd = user_infos[0][2]
             if db_pwd == password:
-                self.write("welcome you: " + username)
+                return
             else:
-                self.write("your password was not right.")
+                return false
         else:
-            self.write("There is no thi user.")
+            return false

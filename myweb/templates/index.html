@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8"/>
-	<link rel="stylesheet" type="text/css" href="index.css"/>
+	<link rel="stylesheet" type="text/css" href="{{static_url("css/index.css")}}"/>
 	<title>资料列表</title>
 </head>
 <body>
@@ -13,7 +13,7 @@
 		<button class="end" id="end">退出登录</button>
 	</div>
 	<div class="rightbox" id="rightbox"></div>
-	<script src="index.js"></script>
-	<script src="..\statics\jquery-3.2.1.min.js"></script>
+	<script src="{{static_url("js/jquery-3.2.1.min.js")}}"></script>
+    <script src="{{static_url("js/index.js")}}"></script>
 </body>
 </html>

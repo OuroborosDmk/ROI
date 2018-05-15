@@ -4,7 +4,7 @@
 import tornado.web
 from methods.db import *
 
-class IndexHandler(tornado.web.RequestHandler):
+class SignupHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("signup.html")
 
