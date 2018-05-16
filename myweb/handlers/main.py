@@ -2,15 +2,29 @@
 # coding=utf-8
 
 import tornado.web
-import methods.readdb as mrd
 import os
 
 class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.render("login.html")
+	def get(self):
+		self.render("main.html")
+	
+	def post(self):
+		path=""
+		imgcount=""
+		newlist=""
+		alllist=[]
+		f=open(r"D:\Python34\myweb\statics\\value\josn.txt","r")
+		line=f.readline()
+		line=line.strip('\n')
+		alllist.append(line)
+		while line:
+			line=f.readline()
+			line=line.strip('\n')
+			alllist.append(line)
+		f.close()
+		path=alllist[1]
+		imgcount=alllist[0]
+		newlist=alllist[2]
+		self.write({"count":imgcount,"path":path,"list":newlist})
 
-    def post(self):
-        count1 = 0    #计数大文件夹下共有多少个小文件夹
-        for filename in os.listdir("D:\Python34\myweb\statics\pic"):
-            count1 += 1
-        return count1
+

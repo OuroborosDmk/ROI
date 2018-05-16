@@ -1,11 +1,11 @@
 $(document).ready(function(){
-    var count;
-    var getid;
+    var getid1;
+    var getjson;
     $.ajax({
         type:"post",
         url:"/indexf",
         success:function(data){
-            count=data;
+            getjson=data;
         },
     });
     $("#image").click(function(){
@@ -16,16 +16,16 @@ $(document).ready(function(){
             newbox.attr("class","newbox");
             newbox.attr("id","user"+i);
         }
-        $("#user1").click(function(e){
-            getid=$(e.target).attr('id');
-            var id = {"userid":getid};
+        $(".newbox").click(function(e){
+            getid1=$(e.target).attr('id');
+            var id = {"userid":getid1};
             $.ajax({
                 type:"post",
                 url:"/index",
                 data:id,
                 cache:false,
                 success:function(data){
-                    alert(data);
+                    window.location.href = "/main";
                 },
             });
         });
