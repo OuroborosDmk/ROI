@@ -8,7 +8,8 @@ import os
 
 settings = dict(
     template_path = os.path.join(os.path.dirname(__file__), "templates"),
-    static_path = os.path.join(os.path.dirname(__file__), "statics")
+    static_path = os.path.join(os.path.dirname(__file__), "statics"),
+    debug=True
     )
 
 application = tornado.web.Application(

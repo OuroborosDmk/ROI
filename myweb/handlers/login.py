@@ -15,7 +15,7 @@ class LoginHandler(tornado.web.RequestHandler):
         if user_infos:
             db_pwd = user_infos[0][2]
             if db_pwd == password:
-                return
+                self.write("welcome")
             else:
                 return false
         else:

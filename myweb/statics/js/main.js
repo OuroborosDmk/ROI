@@ -4,7 +4,6 @@ function createCanvas(){
     var numofpic=getjson.count;//图片张数
     var imgpath=getjson.path//图片路径
     var imglist=getjson.list//图片名称合集
-    alert(imglist);
     var clicksign=0;//点击标志，是否可以再次触发Canvas点击事件
     var getid;//Cnavas的标号
     var area=0;//圈出的面积
@@ -16,6 +15,8 @@ function createCanvas(){
     var canvaswith=704;
     var canvasheight=701;
     var arr=[];
+    var newimglist=new Array();//储存图片路径
+    newimglist=imglist.split(",");
 
     for(var i=0;i<thenumofpic;i++){
         allarray[i]=new Array();
@@ -125,13 +126,19 @@ function createCanvas(){
         //var ctx=$("#"+getid)[0].getContext('2d');
 
         //设置Canvas的left和top
+        var listid=String(getid);
+        listid=listid.replace(/Canvas/,"");
+        listid=parseInt(listid);
+        imgpath="/static/pic/qwer/"+newimglist[listid-1];//需要标注的影像资料路径
+        
+
         $("#"+getid).css("z-index","501")
                     .css("left","400px")
                     .css("top","50px")
                     .css("margin-left","0")
                     .css("margin-top","0")
                     .css("position","fixed")
-                    .css("background-image","url(./data_du/YU_GUI_QING.bmp)");
+                    .css("background-image","url("+imgpath+")");
                     //.css("float","left");
         $("#"+getid).attr("width","704px")
                     .attr("height","701px");//Canvas的高宽不能通过CSS设置，只能通过属性直接设置
@@ -410,13 +417,8 @@ function createCanvas(){
                      .css("left","70px")
                      .css("top","50px");
                 
-        if (window.XMLHttpRequest){
-            xmlhttp=new XMLHttpRequest();
-        }
-        else{
-            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.open("GET","savedata.xml",false);
+        xmlhttp=new XMLHttpRequest();
+        xmlhttp.open("GET","/statics/XML/savedata.xml",false);
         xmlhttp.send();
         xmlDoc=xmlhttp.responseXML; 
         x=xmlDoc.getElementsByTagName("INPUT");
@@ -509,7 +511,7 @@ function createCanvas(){
 
 function getthejson(){
     $.ajax({
-        async: false,//同步请求，相应完成后继续脚步操作
+        async:false,//同步请求，相应完成后继续脚步操作
         type:"post",
         url:"/main",
         success:function(data){

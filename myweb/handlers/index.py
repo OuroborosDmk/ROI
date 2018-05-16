@@ -3,6 +3,7 @@
 
 import tornado.web
 import os
+import re
 
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):
@@ -16,7 +17,7 @@ class IndexHandler(tornado.web.RequestHandler):
         for passfilename in os.listdir(path):
             count2 += 1
         count2=str(count2)
-        idlist=''.join(idlist)
+        idlist=','.join(idlist)
         txtpath="D:\Python34\myweb\statics\\value\josn.txt"
         f = open(txtpath,'a')
         f.seek(0)
@@ -29,11 +30,13 @@ class IndexHandler(tornado.web.RequestHandler):
 
 class IndexfHandler(tornado.web.RequestHandler):
     def post(self):
-        for root, dirs, files in os.walk(path):
-            userlist=files
-        userlist=''.join(userlist)
-    	count1=0
-    	for passfilename in os.listdir("D:\Python34\myweb\statics\pic"):
-    		count1 += 1
-    	count1=str(count1)
-    	self.write({"count":count1,"username":userlist})
+        userlist=[]
+        for root, dirs, files in os.walk("D:\Python34\myweb\statics\pic"):
+            for dir in dirs:
+                userlist.append(dir)
+        userlist=','.join(userlist)
+        count1=0
+        for passfilename in os.listdir("D:\Python34\myweb\statics\pic"):
+            count1 += 1
+        count1=str(count1)
+        self.write({"count":count1,"list":userlist})
