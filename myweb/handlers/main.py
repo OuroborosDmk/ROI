@@ -9,11 +9,11 @@ class MainHandler(tornado.web.RequestHandler):
 		self.render("main.html")
 	
 	def post(self):
-		path=""
+		uid=""
 		imgcount=""
 		newlist=""
 		alllist=[]
-		f=open(r"D:\Python34\myweb\statics\\value\josn.txt","r")
+		f=open(r"D:\Python34\myweb\static\value\josn.txt","r")
 		line=f.readline()
 		line=line.strip('\n')
 		alllist.append(line)
@@ -22,9 +22,9 @@ class MainHandler(tornado.web.RequestHandler):
 			line=line.strip('\n')
 			alllist.append(line)
 		f.close()
-		path=alllist[1]
+		uid=alllist[1]
 		imgcount=alllist[0]
 		newlist=alllist[2]
-		self.write({"count":imgcount,"path":path,"list":newlist})
+		self.write({"count":imgcount,"uid":uid,"list":newlist})
 
 
