@@ -14,7 +14,6 @@ function createCanvas(){
     var allarray=new Array();//储存所有结果矩阵的大数组
     var canvaswith=704;
     var canvasheight=701;
-    var arr=[];
     var newimglist=new Array();//储存图片路径
     newimglist=imglist.split(",");
 
@@ -92,6 +91,7 @@ function createCanvas(){
             oMask.style.height=sHeight+"px";
             oMask.style.width=sWidth+"px";
             document.body.appendChild(oMask);//弹出悬浮层
+        var arr=[];//储存图像信息的栈
 
         //弹出工具栏
         var tools=document.createElement("div");
@@ -160,7 +160,8 @@ function createCanvas(){
                 $("#"+getid).attr("width","300px")
                             .attr("height","150px");
                 clicksign=0;
-
+                arr=[];
+                $("#"+getid).unbind();
             }
         });
 
@@ -286,7 +287,7 @@ function createCanvas(){
         $("#circletool").click(function(){//用圆线标注图像
             //var myCanvas = document.getElementById('myCanvas'); 
             //console.log(myCanvas);
-            function InitThis(){
+            function InitThisCircle(){
                 var ctx=$("#"+getid)[0].getContext('2d');
                       
                 var rect={},drag=false;
@@ -344,14 +345,14 @@ function createCanvas(){
 
             }
 
-            InitThis();
+            InitThisCircle();
         });
 
         $("#rectangletool").click(function(){//用矩形线标注图像//修改监听事件
             //var myCanvas=$("#canvas"+i); 
             //console.log(myCanvas);
             
-            function InitThis(){
+            function InitThisRe(){
                 var ctx=$("#"+getid)[0].getContext('2d');
                 //myCanvas.width = window.innerWidth;
                 //myCanvas.height = window.innerHeight;
@@ -402,7 +403,7 @@ function createCanvas(){
                       
             }
 
-            InitThis();
+            InitThisRe();
         });
         
     
@@ -422,9 +423,13 @@ function createCanvas(){
         xmlhttp.send();  
         xmlDoc=xmlhttp.responseXML.documentElement;
         x=xmlDoc.getElementsByTagName("INPUT");
+        var formname=new Array(x.length-1);
 
         for(var i=0;i<x.length;i++){
             $("#theform").append(x[i].getElementsByTagName("TYPENAME")[0].childNodes[0].nodeValue);
+            if(i!=(x.length-1)){
+                formname[i]=x[i].getElementsByTagName("TYPENAME")[0].childNodes[0].nodeValue;
+            }
             var createc=$("<input>");
             $("#theform").append(createc);
             //createc.attr("id","theinput");
@@ -434,18 +439,23 @@ function createCanvas(){
             if(createc.attr("type")=="submit"){
                 createc.attr("id","theinput");//提交按钮的id为theinput
             }
-            $("#theform").append(x[i].getElementsByTagName("TEXT")[0].childNodes[0].nodeValue);
-            $("#theform").append("</input>");
-            for(var j=0;j<x[i].getElementsByTagName("NUMOFBR")[0].childNodes[0].nodeValue;j++){
-                $("#theform").append("<br>");
+            else{
+                createc.attr("id","Input"+i)
             }
+            $("#theform").append("</input>");
+            $("#theform").append("</br>");
         }
 
         $("#theinput").click(function(){
+            var formvalue=new Array(x.length);//储存表单的值
+            for(var i=0;i<x.length;i++){
+                formvalue[i]=$("#Input"+i).val();
+            }
+            
             var pd = {"V":volume};
             $.ajax({
                 type:"post",
-                url:"/",
+                url:"/subform",
                 data:pd,
                 cache:false,
                 success:function(data){
@@ -456,31 +466,13 @@ function createCanvas(){
                 },
            
             });
+            $("#theform").html(" ");//清除原表单中所有信息
+            $("#theform").css("z-index","1")
+                         .css("display","none");
         });
 
-    $("#stepfin").click(function(){//完成操作
-        var v = {"V":volume,"patient":uid};
-            $.ajax({
-                type:"post",
-                url:"/result",
-                data:v,
-                cache:false,
-                success:function(data){
-                    window.location.href = "/index";
-                },
-                error:function(){
-                    alert("error!");
-                },
-            });
     });
-    
-        /*$("#thefin").css("display","block")
-                    .css("z-index","600")
-                    .css("position","absolute")
-                    .css("background-color","white")
-                    .css("left","400px")
-                    .css("top","50px");
-        $("#fintable").append("<tr><th>影像编码</th><th>标记面积</th></tr>");
+    $("#submission").click(function(){//完成操作
 
         var ilist=new Array();//储存操作过的图像序号
         var mlist=new Array();//储存操作过的图像面积
@@ -492,22 +484,6 @@ function createCanvas(){
             }
         }
 
-        for(var j=0;j<ilist.length;j++){
-            $("#fintable").append("<tr><td>"+ilist[j]+"</td><td>"+mlist[j]+"</td></tr>");//输出结果表格
-
-        }
-
-        //$("#finspan").html(volume);//输出肿瘤体积
-
-        $("#finreturn").click(function(){
-            $("#fintable").html(" ");//清除原表格中所有信息
-            $("#thefin").css("z-index","1")
-                        .css("display","none");
-        });*/
-    
-
-    });
-    $("#submission").click(function(){//完成操作
         var v = {"V":volume,"patient":uid};
             $.ajax({
                 type:"post",

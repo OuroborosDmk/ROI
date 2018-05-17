@@ -10,7 +10,8 @@ from handlers.signup import SignupHandler
 from handlers.main import MainHandler
 from handlers.index import IndexfHandler
 from handlers.index import ResultHandler
-from handlers.index import ShowHandler
+from handlers.index import ShowoneHandler
+from handlers.index import SubformHandler
 
 url = [
     (r'/', LoginHandler),
@@ -19,5 +20,6 @@ url = [
     (r'/main',MainHandler),
     (r'/indexf',IndexfHandler),
     (r'/result',ResultHandler),
-    (r'/show',ShowHandler),
+    (r'/showone',ShowoneHandler),
+    (r'/subform',SubformHandler),
 ]

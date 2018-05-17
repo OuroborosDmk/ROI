@@ -1,3 +1,0 @@
-9
-D:\Python34\myweb\statics\pic\qwer
-YU_GUI_QING0.bmp,YU_GUI_QING13.bmp,YU_GUI_QING14.bmp,YU_GUI_QING15.bmp,YU_GUI_QING16.bmp,YU_GUI_QING2.bmp,YU_GUI_QING3.bmp,YU_GUI_QING4.bmp,YU_GUI_QING5.bmp

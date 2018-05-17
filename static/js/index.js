@@ -52,6 +52,7 @@ $(document).ready(function(){
                 },
             });
     });
+    
     $("#end").click(function(){
         var returnsign=confirm("确认返回？");
         if(returnsign==true){

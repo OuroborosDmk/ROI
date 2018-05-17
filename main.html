@@ -170,17 +170,6 @@
     <form id="theform" action="" method="POST" target="_blank" accept-charset="UTF-8" autocomplete="off" novalidate>
         <fieldset>
         <legend>Personal information:</legend>
-        <!--<br>
-        姓名:<input type="text" name="firstname"></input>
-        <br><br>
-        肿瘤类型:
-        <input type="radio" name="ztype" value="良性肿瘤" checked>良性肿瘤</input>
-        <input type="radio" name="ztype" value="恶性肿瘤" >恶性肿瘤</input>
-        <br><br>
-        手术日期:<input type="date" name="sday">
-        <br><br>
-        <input type="submit" value="Submit">
-        <br>-->
         </fieldset>
     </form>
     <div id="thefin">
@@ -213,7 +202,6 @@
             var allarray=new Array();//储存所有结果矩阵的大数组
             var canvaswith=704;
             var canvasheight=701;
-            var arr=[];
             
             if(thenumofpic<=0||thenumofpic>50)
                 alert("输入错误");
@@ -293,6 +281,7 @@
                     oMask.style.height=sHeight+"px";
                     oMask.style.width=sWidth+"px";
                     document.body.appendChild(oMask);//弹出悬浮层
+                var arr=[];//储存图像信息的栈
 
                 //弹出工具栏
                 var tools=document.createElement("div");
@@ -337,17 +326,7 @@
                             //.css("float","left");
                 $("#"+getid).attr("width","704px")
                             .attr("height","701px");//Canvas的高宽不能通过CSS设置，只能通过属性直接设置
-                            
-                /*var imgObj = new Image();
-                imgObj.src = "./data_du/YU_GUI_QING.bmp";
-                //待图片加载完后，将其显示在canvas上
-                imgObj.onload = function(){
-                    var ctx=$("#"+getid)[0].getContext('2d');
-                    ctx.drawImage(this, 0, 0);//this即是imgObj,保持图片的原始大小：470*480
-                    //ctx.drawImage(this, 0, 0,1024,768);//改变图片的大小到1024*768
-                }*/
-
-            
+                        
                 //点击return关闭Canvas
                 $("#returntool").click(function(){
                     var returnsign=confirm("确认返回？");
@@ -357,14 +336,15 @@
                         document.body.removeChild(oMask);
                         document.body.removeChild(toolbox);
                         $("#"+getid).css("z-index","auto")
-                                    .css("margin-left","300px")
+                                    .css("margin-left","150px")
                                     .css("margin-top","50px")
                                     .css("background-image","none")
                                     .css("position","static");
                         $("#"+getid).attr("width","300px")
                                     .attr("height","150px");
                         clicksign=0;
-
+                        arr=[];
+                        $("#"+getid).unbind();
                     }
                 });
 
@@ -409,8 +389,8 @@
                      
                         $("#"+getid).mousemove(function(e){
                             if(mousePressed){
-                                coordinateX.push(e.pageX-$(this).offset().left);
-                                coordinateY.push(e.pageY-$(this).offset().top);
+                                //coordinateX.push(e.pageX-$(this).offset().left);
+                                //coordinateY.push(e.pageY-$(this).offset().top);
                                 Draw(e.pageX-$(this).offset().left,e.pageY-$(this).offset().top,true);
                             }
                         });
@@ -428,7 +408,8 @@
                                 ctx.closePath();
                                 ctx.stroke();
                             }
-                            //alert(coordinateX.length);
+                            alert(coordinateX.length);
+                            alert(coordinateY.length);
                             arr.push(ctx.getImageData(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height));
                         });
 
@@ -447,8 +428,7 @@
                             ctx.lineTo(x,y);
                             ctx.closePath();
                             ctx.stroke();
-                        }
-                        if((parseInt(x)<parseInt(lastX))&&(parseInt(y)<parseInt(lastY))){
+                            if((parseInt(x)<parseInt(lastX))&&(parseInt(y)<parseInt(lastY))){
                             for(var i=parseInt(lastX);i>parseInt(x);i--){
                                 coordinateX.push(i);
                             }
@@ -480,6 +460,7 @@
                                 coordinateY.push(j);
                             }
                         }
+                        }
                         lastX=x; lastY=y;
                     }
 
@@ -489,7 +470,7 @@
                 $("#circletool").click(function(){//用圆线标注图像
                     //var myCanvas = document.getElementById('myCanvas'); 
                     //console.log(myCanvas);
-                    function InitThis(){
+                    function InitThisCircle(){
                         var ctx=$("#"+getid)[0].getContext('2d');
                               
                         var rect={},drag=false;
@@ -547,14 +528,14 @@
 
                     }
 
-                    InitThis();
+                    InitThisCircle();
                 });
 
                 $("#rectangletool").click(function(){//用矩形线标注图像//修改监听事件
                     //var myCanvas=$("#canvas"+i); 
                     //console.log(myCanvas);
                     
-                    function InitThis(){
+                    function InitThisRe(){
                         var ctx=$("#"+getid)[0].getContext('2d');
                         //myCanvas.width = window.innerWidth;
                         //myCanvas.height = window.innerHeight;
@@ -605,7 +586,7 @@
                               
                     }
 
-                    InitThis();
+                    InitThisRe();
                 });
                 
             
@@ -617,17 +598,6 @@
             }
 
             $("#steptwo").click(function(){//标记肿瘤种类函数
-
-
-
-                /*var sWidth=document.body.scrollWidth;//获取整个页面宽度
-                var sHeight=document.body.scrollHeight;//获取整个页面高度
-                var wHeight=document.documentElement.clientHeight;//获取页面的可视区域高度
-                var oMask=document.createElement("div");
-                    oMask.id="canvasbg";
-                    oMask.style.height=sHeight+"px";
-                    oMask.style.width=sWidth+"px";
-                    document.body.appendChild(oMask);//弹出悬浮层*/
 
                 $("#theform").css("display","block")
                              .css("z-index","600")
@@ -646,16 +616,14 @@
                 xmlhttp.send();
                 xmlDoc=xmlhttp.responseXML; 
                 x=xmlDoc.getElementsByTagName("INPUT");
-
-                /*thetypename=(x[i].getElementsByTagName("TYPENAME")[0].childNodes[0].nodeValue);
-                thetype=(x[i].getElementsByTagName("TYPE")[0].childNodes[0].nodeValue);
-                thename=(x[i].getElementsByTagName("NAME")[0].childNodes[0].nodeValue);
-                thevalue=(x[i].getElementsByTagName("VALUE")[0].childNodes[0].nodeValue);
-                thetext=(x[i].getElementsByTagName("TEXT")[0].childNodes[0].nodeValue);
-                numofbr=(x[i].getElementsByTagName("NUMOFBR")[0].childNodes[0].nodeValue);*/
+                var formname=new Array(x.length-1);
 
                 for(var i=0;i<x.length;i++){
                     $("#theform").append(x[i].getElementsByTagName("TYPENAME")[0].childNodes[0].nodeValue);
+                    if(i!=(x.length-1)){
+                        formname[i]=x[i].getElementsByTagName("TYPENAME")[0].childNodes[0].nodeValue;
+                    }
+                    
                     var createc=$("<input>");
                     $("#theform").append(createc);
                     //createc.attr("id","theinput");
@@ -665,17 +633,25 @@
                     if(createc.attr("type")=="submit"){
                         createc.attr("id","theinput");//提交按钮的id为theinput
                     }
-                    $("#theform").append(x[i].getElementsByTagName("TEXT")[0].childNodes[0].nodeValue);
-                    $("#theform").append("</input>");
-                    for(var j=0;j<x[i].getElementsByTagName("NUMOFBR")[0].childNodes[0].nodeValue;j++){
-                        $("#theform").append("<br>");
+                    else{
+                        createc.attr("id","Input"+i)
                     }
+                    $("#theform").append("</input>");
+                    $("#theform").append("</br>");
                 }
 
                 $("#theinput").click(function(){
+                    var formvalue=new Array(x.length-1);
+                    for(var i=0;i<x.length;i++){
+                        formvalue[i]=$("#Input"+i).val();
+                    }
+                    alert(formname.length);
+                    alert(formname[2]);
+                    alert(formname[0]);
                     $("#theform").html(" ");//清除原表单中所有信息
                     $("#theform").css("z-index","1")
                                  .css("display","none");
+
                     return forminput();//return 阻止表单提交,需要表单提交时去掉return
                    
                 });
@@ -706,37 +682,12 @@
 
                 }
 
-                //$("#finspan").html(volume);//输出肿瘤体积
-
                 $("#finreturn").click(function(){
                     $("#fintable").html(" ");//清除原表格中所有信息
                     $("#thefin").css("z-index","1")
                                 .css("display","none");
                 });
             });
-
-
-            /*function createImage(){
-                var imgFile = obj.files[0];  
-                console.log(imgFile);  
-                var img = new Image();  
-                var fr = new FileReader();  
-                fr.onload = function(){  
-                    var htmlStr = '<div class="upWrap">';  
-                    htmlStr += '<div class="fileWrap">';  
-                    htmlStr += '<input type="file" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg" onchange="upImg(this)"/>';  
-                    htmlStr += '</div>';  
-                    htmlStr += '<div class="imgWrap upedImg"><span class="deleteImg">X</span>';  
-                    htmlStr += '<img src="'+fr.result+'" alt="" />';  
-                    htmlStr += '</div>';  
-                    htmlStr += '</div>';  
-                    //$('.imgOnloadWrap').append(htmlStr);  
-                    obj.value = '';  
-                }  
-                fr.readAsDataURL(imgFile);  
-            }*/
-
-            
 
         }
         

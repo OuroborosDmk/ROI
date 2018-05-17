@@ -60,8 +60,15 @@ class ResultHandler(tornado.web.RequestHandler):
             conn.rollback()
             return false
 
-class ShowHandler(tornado.web.RequestHandler):
+class ShowoneHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("index.html")
     def post(self):
         sql="select * from voftumour"
+
+class SubformHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render("main.html")
+    def post(self):
+        sql="select * from voftumour"
+
