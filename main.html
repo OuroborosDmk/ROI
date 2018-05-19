@@ -194,40 +194,68 @@
             var area=0;//圈出的面积
             var volume=0;//肿瘤体积
             //var thisid;
-            var numofpic=prompt("请输入上传的图片张数","9");
+            var numofpic=14;//prompt("请输入上传的图片张数","1");
+            var choose=confirm("是否选择标注所有图像？");
+            var showcount=0;//如果不全标注判断标注几张图片
+            var showimg=new Array();//储存不全标注图片的序号
             var theformyon=0;//肿瘤类型按钮是否可用,0为可用
             var thetableyon=0;//显示结果类型按钮是否可用,0为可用
             var thenumofpic=parseInt(numofpic);//强制类型转换
             //var savearray=new Array();//暂时储存结果矩阵
             var allarray=new Array();//储存所有结果矩阵的大数组
-            var canvaswith=704;
+            var canvaswidth=704;
             var canvasheight=701;
             
-            if(thenumofpic<=0||thenumofpic>50)
-                alert("输入错误");
+            if(numofpic==1){
+                showcount=1;
+                showimg[0]=1;
+            }
+            else if(numofpic%2==0){
+                showcount=4;
+                showimg[0]=1;
+                showimg[1]=thenumofpic/2;
+                showimg[2]=thenumofpic/2+1;
+                showimg[3]=thenumofpic;
+            }
+            else if(numofpic%2==1){
+                showcount=3;
+                showimg[0]=1;
+                showimg[1]=(thenumofpic+1)/2;
+                showimg[2]=thenumofpic;
+            }
+
+
+            if (choose==true){
+                for(var i=1;i<=thenumofpic;i++){
+                    var createc=$("<canvas></canvas>");
+                    $("#box").append(createc);
+                    createc.attr("id","Canvas"+i);
+                }//生成与需要标注的图像张数相同的canvas
+            }
+            else{
+                for(var i=1;i<=showcount;i++){
+                    var createc=$("<canvas></canvas>");
+                    $("#box").append(createc);
+                    createc.attr("id","Canvas"+showimg[i-1]);
+                }
+            }
 
             for(var i=0;i<thenumofpic;i++){
                 allarray[i]=new Array();
-                for(var j=0;j<canvaswith;j++){
+                for(var j=0;j<canvasheight;j++){
                     allarray[i][j]=new Array();
                 }
             }
 
             for(var i=0;i<thenumofpic;i++){
-                for(var j=0;j<canvaswith;j++){
-                    for(var k=0;k<canvasheight;k++){
+                for(var j=0;j<canvasheight;j++){
+                    for(var k=0;k<canvaswidth;k++){
                         allarray[i][j][k]=0;
                     }
                 }
             }
 
             //alert(allarray[1][2][3]);//测试数组
-
-            for(var i=1;i<=thenumofpic;i++){
-                var createc=$("<canvas></canvas>");
-                $("#box").append(createc);
-                createc.attr("id","Canvas"+i);
-            }//生成与需要标注的图像张数相同的canvas
             
             var canvaslist=new Array(thenumofpic);//储存圈出的面积
             for(var i=0;i<thenumofpic;i++){
@@ -235,41 +263,15 @@
             }//初始化数组为0
             //console.log(canvaslist.length);
             
-            if(numofpic==1){
-                $("#Canvas1").css("border-color","red");
-            }
-            else if(numofpic%2==0){
-                $("#Canvas1").css("border-color","red");
-                $("#Canvas"+thenumofpic/2).css("border-color","red");
-                $("#Canvas"+(thenumofpic/2+1)).css("border-color","red");
-                $("#Canvas"+numofpic).css("border-color","red");
-            }
-            else if(numofpic%2==1){
-                $("#Canvas1").css("border-color","red");
-                $("#Canvas"+(thenumofpic+1)/2).css("border-color","red");
-                $("#Canvas"+numofpic).css("border-color","red");
-            }
 
             
             $("canvas").click(function(e){
                 if(clicksign==0){
                     getid=$(e.target).attr('id'); 
-
+                    alert(getid);
                     openNew();
                 }
             });//点击要标注的canvas还原大小以进行标注
-            
-            function V_calculate(){//计算体积肿瘤函数
-                if(numofpic==1){
-                    volume=canvaslist[0]*1;
-                }//医学影像资料一张的时候
-                else if(numofpic%2==0){
-
-                }//医学影像资料张数为偶数
-                else if(numofpic%2==1){
-
-                }//医学影像资料张数为奇数
-            }
 
             function openNew(){//悬浮层弹出，还原canvas大小
                 clicksign=1;
@@ -344,7 +346,7 @@
                                     .attr("height","150px");
                         clicksign=0;
                         arr=[];
-                        $("#"+getid).unbind();
+                        
                     }
                 });
 
@@ -366,6 +368,7 @@
                 });
 
                 $("#othertool").click(function(){//用不规则线标注图像
+                    $("#"+getid).unbind("mousedown mouseup mousemove mouseleave");
                     var mousePressed=false;
                     var lastX,lastY;
                     var ctx;
@@ -468,6 +471,7 @@
                 })
 
                 $("#circletool").click(function(){//用圆线标注图像
+                    $("#"+getid).unbind("mousedown mouseup mousemove mouseleave");
                     //var myCanvas = document.getElementById('myCanvas'); 
                     //console.log(myCanvas);
                     function InitThisCircle(){
@@ -496,8 +500,8 @@
                             var roundx=Math.ceil(rx+x);//圆心x坐标取整
                             var roundy=Math.ceil(ry+y);//圆心y坐标取整
 
-                            for(var i=0;i<canvaswith;i++){
-                                for(var j=0;j<canvasheight;j++){
+                            for(var i=0;i<canvasheight;i++){
+                                for(var j=0;j<canvaswidth;j++){
                                     if((Math.pow(i-roundx,2)+Math.pow(j-roundy,2)==Math.pow(r,2))
                                         ||(Math.pow(i-roundx,2)+Math.pow(j-roundy,2)<Math.pow(r,2))){
                                         allarray[numofid-1][i][j]=1;
@@ -534,7 +538,7 @@
                 $("#rectangletool").click(function(){//用矩形线标注图像//修改监听事件
                     //var myCanvas=$("#canvas"+i); 
                     //console.log(myCanvas);
-                    
+                    $("#"+getid).unbind("mousedown mouseup mousemove mouseleave");
                     function InitThisRe(){
                         var ctx=$("#"+getid)[0].getContext('2d');
                         //myCanvas.width = window.innerWidth;
@@ -563,8 +567,8 @@
                             numofid=parseInt(numofid);
                             canvaslist[numofid-1]=area;
                             //alert(canvaslist[numofid-1]);
-                            for(var i=rect.startX-1;i<rect.startX+rect.w;i++){
-                                for(var j=rect.startY-1;j<rect.startY+rect.h;j++){
+                            for(var i=rect.startY-1;i<rect.startY+rect.h;i++){
+                                for(var j=rect.startX-1;j<rect.startX+rect.w;j++){
                                     allarray[numofid-1][i][j]=1;
                                 }
                             }//将矩阵储存在大数组中
@@ -642,12 +646,16 @@
 
                 $("#theinput").click(function(){
                     var formvalue=new Array(x.length-1);
-                    for(var i=0;i<x.length;i++){
+                    for(var i=0;i<(x.length-1);i++){
                         formvalue[i]=$("#Input"+i).val();
                     }
-                    alert(formname.length);
-                    alert(formname[2]);
-                    alert(formname[0]);
+                    var allform=new Array();
+                    var forml=x.length-1;
+                    allform=formname.concat(formvalue);
+                    allform.push(forml.toString());
+                    var forma=JSON.stringify(allform);
+                    alert(forma);
+                    //alert("1");
                     $("#theform").html(" ");//清除原表单中所有信息
                     $("#theform").css("z-index","1")
                                  .css("display","none");
@@ -659,14 +667,6 @@
 
             $("#stepfin").click(function(){//完成操作
 
-                $("#thefin").css("display","block")
-                            .css("z-index","600")
-                            .css("position","absolute")
-                            .css("background-color","white")
-                            .css("left","400px")
-                            .css("top","50px");
-                $("#fintable").append("<tr><th>影像编码</th><th>标记面积</th></tr>");
-
                 var ilist=new Array();//储存操作过的图像序号
                 var mlist=new Array();//储存操作过的图像面积
 
@@ -676,24 +676,51 @@
                         mlist.push(canvaslist[i]);
                     }
                 }
+                var newarrayl=ilist.length;
+                var newallarray=new Array(newarrayl);
+                var asd;
 
-                for(var j=0;j<ilist.length;j++){
-                    $("#fintable").append("<tr><td>"+ilist[j]+"</td><td>"+mlist[j]+"</td></tr>");//输出结果表格
-
+                for(var i=0;i<newarrayl;i++){
+                    newallarray[i]=new Array();
+                    for(var j=0;j<canvasheight;j++){
+                        newallarray[i][j]=new Array();
+                    }
                 }
 
-                $("#finreturn").click(function(){
-                    $("#fintable").html(" ");//清除原表格中所有信息
-                    $("#thefin").css("z-index","1")
-                                .css("display","none");
-                });
+                for(var i=0;i<newarrayl;i++){
+                    for(var j=0;j<canvasheight;j++){
+                        for(var k=0;k<canvaswidth;k++){
+                            newallarray[i][j][k]=0;
+                        }
+                    }
+                }
+
+                for(var i=0;i<newarrayl;i++){
+                    asd=parseInt(ilist[i]);
+                    for(var j=0;j<canvasheight;j++){
+                        for(var k=0;k<canvaswidth;k++){
+                            newallarray[i][j][k]=allarray[asd-1][j][k];
+                        }
+                    }
+                }
+
+                var count=0;
+                for(var i=0;i<newarrayl;i++){
+                    for(var j=0;j<canvasheight;j++){
+                        for(var k=0;k<canvaswidth;k++){
+                            if(newallarray[i][j][k]==1){
+                                count+=1;
+                            }
+                        }
+                    }
+                }
             });
 
         }
-        
+
         createCanvas();
 
-        
+
         }
     </script>
 </body>
