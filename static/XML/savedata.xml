@@ -1,31 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CATALOG>
 <INPUT>
-<TYPENAME>姓名</TYPENAME>
+<TYPENAME>肿瘤类型</TYPENAME>
 <TYPE>text</TYPE>
 <NAME>firstname</NAME>
 <VALUE> </VALUE>
 </INPUT>
 <INPUT>
-<TYPENAME>肿瘤类型</TYPENAME>
+<TYPENAME>遗传性</TYPENAME>
 <TYPE>text</TYPE>
 <NAME>type</NAME>
 <VALUE> </VALUE>
 </INPUT>
 <INPUT>
-<TYPENAME>肿瘤类型</TYPENAME>
+<TYPENAME>异型性</TYPENAME>
 <TYPE>text</TYPE>
 <NAME>type</NAME>
 <VALUE> </VALUE>
 </INPUT>
 <INPUT>
-<TYPENAME>肿瘤类型</TYPENAME>
-<TYPE>text</TYPE>
-<NAME>type</NAME>
-<VALUE> </VALUE>
-</INPUT>
-<INPUT>
-<TYPENAME>肿瘤类型</TYPENAME>
+<TYPENAME>分化程度</TYPENAME>
 <TYPE>text</TYPE>
 <NAME>type</NAME>
 <VALUE> </VALUE>

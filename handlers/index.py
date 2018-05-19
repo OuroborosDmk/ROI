@@ -4,8 +4,11 @@
 import tornado.web
 import os
 import re
-from methods.db import *
+from methods.db import conn
+from methods.db import cur
+import tornado.escape
 
+x="1"
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("index.html")
@@ -46,29 +49,97 @@ class ResultHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("index.html")
     def post(self):
-        V = self.get_argument("V")
+        V=self.get_argument("V")
         patientid=self.get_argument("patient")
+        feature=self.get_argument("features")
         f=open(r"D:\Python34\myweb\static\value\username.txt","r")
         line=f.readline()
         line=line.strip('\n')
+        '''
+        path="D:\Python34\myweb\static\\value\patientid.txt";
+        f = open(path,'a')
+        f.seek(0)
+        f.truncate()
+        f.write(patientid)
+        f.close()
+        '''
         try:
-            sql = "INSERT INTO voftumour(username,patientid,volume) VALUES (" + line +","+ patientid +","+ V +")"
+            sql = "INSERT INTO informations(username,patientname,voftumour,feature) VALUES ('" + line + "','"+ patientid +"',"+ V +",'"+ feature +"')"
             cur.execute(sql)
             conn.commit()
 
         except:
             conn.rollback()
-            return false
 
 class ShowoneHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("index.html")
+        f=open(r"D:\Python34\myweb\static\value\username.txt","r")
+        line=f.readline()
+        line=line.strip('\n')
+        sql = "select * from informations where username='" + line + "'"
+        cur.execute(sql)
+        user_infos=cur.fetchall()
+        self.write(str(len(user_infos)));
     def post(self):
-        sql="select * from voftumour"
+        postcount=self.get_argument("postcount")
+        count=int(postcount)
+        f=open(r"D:\Python34\myweb\static\value\username.txt","r")
+        line=f.readline()
+        line=line.strip('\n')
+        sql = "select * from informations where username='" + line + "'"
+        cur.execute(sql)
+        user_infos=cur.fetchall()
+        db_id=user_infos[count][2]
+        db_v=str(user_infos[count][3])
+        db_f=user_infos[count][4]
+        '''
+        sql = "select * from matrix where username='" + line + "'"
+        cur.execute(sql)
+        user_infos=cur.fetchall()
+        db_path=user_infos[0][3]
+        '''
+        self.write({"username":line,"patientid":db_id,"voftumour":db_v,"feature":db_f})
+        #self.write(str());
 
 class SubformHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("main.html")
     def post(self):
-        sql="select * from voftumour"
+        inform = tornado.escape.json_decode(self.request.body)
 
+        self.write(inform)
+        
+class MatrixHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render("main.html")
+    def post(self):
+        matrixa = tornado.escape.json_decode(self.request.body)
+        uid=""
+        alllist=[]
+        f=open(r"D:\Python34\myweb\static\value\josn.txt","r")
+        line=f.readline()
+        line=line.strip('\n')
+        alllist.append(line)
+        while line:
+            line=f.readline()
+            line=line.strip('\n')
+            alllist.append(line)
+        f.close()
+        f=open(r"D:\Python34\myweb\static\value\username.txt","r")
+        username=f.readline()
+        username=username.strip('\n') 
+        uid=alllist[1]
+        path="D:\Python34\myweb\static\Matrix\\"+uid+"\matrix.txt";
+        f = open(path,'a')
+        f.seek(0)
+        f.truncate()
+        f.write(str(matrixa))
+        f.close()
+        try:
+            sql = "INSERT INTO Matrix(username,patientid,dpath) VALUES ('" + username +"','"+ uid +"','"+ path +"')"
+            cur.execute(sql)
+            conn.commit()
+
+        except:
+            conn.rollback()
+            

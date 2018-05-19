@@ -3,16 +3,22 @@
 <head>
 	<meta charset="UTF-8"/>
 	<link rel="stylesheet" type="text/css" href="{{static_url("css/index.css")}}"/>
+	<link rel="shortcut icon" href="#"/>
 	<title>资料列表</title>
 </head>
 <body>
-	<header></header>
+	<header>
+		<h1>基于HTML5的ROI图像标注系统</h1>
+	</header>
 	<div class="leftbox">
-		<button class="image" id="image">影像资料</button>
+		<button class="image" id="image">案例列表</button>
 		<button class="history" id="history">历史记录</button>
 		<button class="end" id="end">退出登录</button>
 	</div>
-	<div class="rightbox" id="rightbox"></div>
+	<div class="rightbox" id="rightbox">
+		<table class="idtable" id="idtable">
+		</table>
+	</div>
 	<script src="{{static_url("js/jquery-3.2.1.min.js")}}"></script>
     <script src="{{static_url("js/index.js")}}"></script>
 </body>
