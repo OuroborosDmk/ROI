@@ -1,6 +1,7 @@
 window.onload=function(){
 
 function createCanvas(){
+    var choose=confirm("是否选择标注所有图像？");
     var numofpic=getjson.count;//图片张数
     var uid=getjson.uid//图片路径
     var imglist=getjson.list//图片名称合集
@@ -17,8 +18,27 @@ function createCanvas(){
     var feature="";
     var newimglist=new Array();//储存图片路径
     newimglist=imglist.split(",");
+    var index=0;//储存矩阵指数
+    var middleindex=0;//储存大数组序列
 
-    alert(newimglist.length);
+    if(numofpic==1){
+        showcount=1;
+        showimg[0]=1;
+    }
+    else if(numofpic%2==0){
+        showcount=4;
+        showimg[0]=1;
+        showimg[1]=thenumofpic/2;
+        showimg[2]=thenumofpic/2+1;
+        showimg[3]=thenumofpic;
+    }
+    else if(numofpic%2==1){
+        showcount=3;
+        showimg[0]=1;
+        showimg[1]=(thenumofpic+1)/2;
+        showimg[2]=thenumofpic;
+    }
+
     for(var i=0;i<thenumofpic;i++){
         allarray[i]=new Array();
         for(var j=0;j<canvasheight;j++){
@@ -34,25 +54,46 @@ function createCanvas(){
         }
     }
 
-    //alert(allarray[1][2][3]);//测试数组
-
-    for(var i=1;i<=thenumofpic;i++){
-        var created=$("<div></div>");
-        $("#rightbox").append(created);
-        created.attr("class","canvasdiv")
-               .attr("id","canvasdiv"+i);
+    if (choose==true){
+        for(var i=1;i<=thenumofpic;i++){
+            var created=$("<div></div>");
+            $("#rightbox").append(created);
+            created.attr("class","canvasdiv")
+                   .attr("id","canvasdiv"+i);
         }//生成与需要标注的图像张数相同的canvas
 
-    for(var i=1;i<=thenumofpic;i++){
-        imgpath="/static/pic/qwer/"+newimglist[i-1];
-        var createc=$("<canvas></canvas>");
-        $("#canvasdiv"+i).append(createc);
-        createc.attr("class","mycanvas")
-               .attr("width","195px")
-               .attr("height","150px")
-               .attr("id","Canvas"+i);
-        createc.css("background-image","url("+imgpath+")");
-    }//生成与需要标注的图像张数相同的canvas
+        for(var i=1;i<=thenumofpic;i++){
+            imgpath="/static/pic/qwer/"+newimglist[i-1];
+            var createc=$("<canvas></canvas>");
+            $("#canvasdiv"+i).append(createc);
+            createc.attr("class","mycanvas")
+                   .attr("width","195px")
+                   .attr("height","150px")
+                   .attr("id","Canvas"+i);
+            createc.css("background-image","url("+imgpath+")");
+        }//生成与需要标注的图像张数相同的canvas
+    }
+    else{
+        for(var i=1;i<=showcount;i++){
+            var created=$("<div></div>");
+            $("#rightbox").append(created);
+            created.attr("class","canvasdiv")
+                   .attr("id","canvasdiv"+i);
+        }
+        for(var i=1;i<=showcount;i++){
+            var middlecount=showimg[showcount];
+            imgpath="/static/pic/qwer/"+newimglist[middlecount];
+            var createc=$("<canvas></canvas>");
+            $("#canvasdiv"+i).append(createc);
+            createc.attr("class","mycanvas")
+                   .attr("width","195px")
+                   .attr("height","150px")
+                   .attr("id","Canvas"+i);
+            createc.css("background-image","url("+imgpath+")");
+        }//生成与需要标注的图像张数相同的canvas
+    }
+
+    
     
     var canvaslist=new Array(thenumofpic);//储存圈出的面积
     for(var i=0;i<thenumofpic;i++){
@@ -146,7 +187,8 @@ function createCanvas(){
                 $(".canvasdiv").css("visibility","visible");
                 clicksign=0;
                 arr=[];
-                //$("#"+getid).unbind();
+                index=0;
+                $("#"+getid).unbind("mousedown mouseup mousemove mouseleave");
             }
         });
 
@@ -158,16 +200,37 @@ function createCanvas(){
             if(arr.length>0){
                 ctx.putImageData(arr[arr.length-1],0,0,0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
             }
+            if(index-1>0){
+                for(var i=0;i<canvasheight;i++){
+                    for(var j=0;j<canvaswidth;j++){
+                        if(allarray[middleindex][i][j]>=Math.pow(2,(index-1))){
+                            allarray[middleindex][i][j]-=Math.pow(2,(index-1));
+                        }
+                    }
+                }
+                index-=1;
+            }
+            else if(index-1==0){
+                for(var i=0;i<canvasheight;i++){
+                    for(var j=0;j<canvaswidth;j++){
+                        if(allarray[middleindex][i][j]==1){
+                            allarray[middleindex][i][j]=0;
+                        }
+                    }
+                }
+                index=0;
+            }
         });
 
         $("#cleartool").click(function(){//清除标注痕迹
             var cxt=$("#"+getid)[0].getContext("2d");
             arr=[];
             cxt.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
-
+            index=0;
         });
 
         $("#othertool").click(function(){//用不规则线标注图像
+            $("#"+getid).unbind("mousedown mouseup mousemove mouseleave");
             var mousePressed=false;
             var lastX,lastY;
             var ctx;
@@ -230,38 +293,7 @@ function createCanvas(){
                     ctx.lineTo(x,y);
                     ctx.closePath();
                     ctx.stroke();
-                    if((parseInt(x)<parseInt(lastX))&&(parseInt(y)<parseInt(lastY))){
-                    for(var i=parseInt(lastX);i>parseInt(x);i--){
-                        coordinateX.push(i);
-                    }
-                    for(var j=parseInt(lastY);j>parseInt(y);j--){
-                        coordinateY.push(j);
-                    }
-                }
-                else if((parseInt(x)<parseInt(lastX))&&(parseInt(y)>parseInt(lastY))){
-                    for(var i=parseInt(lastX);i>parseInt(x);i--){
-                        coordinateX.push(i);
-                    }
-                    for(var j=parseInt(lastY);j<parseInt(y);j++){
-                        coordinateY.push(j);
-                    }
-                }
-                else if((parseInt(x)>parseInt(lastX))&&(parseInt(y)<parseInt(lastY))){
-                    for(var i=parseInt(lastX);i<parseInt(x);i++){
-                        coordinateX.push(i);
-                    }
-                    for(var j=parseInt(lastY);j>parseInt(y);j--){
-                        coordinateY.push(j);
-                    }
-                }
-                else if((parseInt(x)>parseInt(lastX))&&(parseInt(y)>parseInt(lastY))){
-                    for(var i=parseInt(lastX);i<parseInt(x);i++){
-                        coordinateX.push(i);
-                    }
-                    for(var j=parseInt(lastY);j<parseInt(y);j++){
-                        coordinateY.push(j);
-                    }
-                }
+                    
                 }
                 lastX=x; lastY=y;
             }
@@ -270,6 +302,7 @@ function createCanvas(){
         });
 
         $("#circletool").click(function(){//用圆线标注图像
+            $("#"+getid).unbind("mousedown mouseup mousemove mouseleave");
             //var myCanvas = document.getElementById('myCanvas'); 
             //console.log(myCanvas);
             function InitThisCircle(){
@@ -279,6 +312,10 @@ function createCanvas(){
                 var rx,ry,r;//rx,ry均为坐标,r为半径
                 
                 $("#"+getid).mousedown(function(e){
+                    if(index>=8){
+                        alert("达到标记上限！");
+                        return false;
+                    }
                     x=e.offsetX;
                     y=e.offsetY;
                     drag=true;
@@ -302,11 +339,14 @@ function createCanvas(){
                         for(var j=0;j<canvaswidth;j++){
                             if((Math.pow(i-roundx,2)+Math.pow(j-roundy,2)==Math.pow(r,2))
                                 ||(Math.pow(i-roundx,2)+Math.pow(j-roundy,2)<Math.pow(r,2))){
-                                allarray[numofid-1][i][j]=1;
+                                allarray[numofid-1][i][j]+=Math.pow(2,index);
                             }
                         }
                     }
-
+                    middleindex=numofid-1;
+                    if(index<8){
+                        index+=1;
+                    }
                     //console.log(roundx);
                     //console.log(roundy);
                 });
@@ -333,10 +373,10 @@ function createCanvas(){
             InitThisCircle();
         });
 
-        $("#rectangletool").click(function(){//用矩形线标注图像//修改监听事件
+        $("#rectangletool").click(function(){//用矩形线标注图像
             //var myCanvas=$("#canvas"+i); 
             //console.log(myCanvas);
-            
+            $("#"+getid).unbind("mousedown mouseup mousemove mouseleave");
             function InitThisRe(){
                 var ctx=$("#"+getid)[0].getContext('2d');
                 //myCanvas.width = window.innerWidth;
@@ -345,12 +385,13 @@ function createCanvas(){
                 var rect={},drag=false;
                       
                 $("#"+getid).mousedown(function(e){
+                    if(index>=8){
+                        alert("达到标记上限！");
+                        return false;
+                    }
                     rect.startX=(e.pageX-this.offsetLeft);
                     rect.startY=(e.pageY-this.offsetTop);
-                    drag=true;
-                    
-                    
-                    
+                    drag=true;                    
                 });
 
                 $("#"+getid).mouseup(function(e){
@@ -367,9 +408,13 @@ function createCanvas(){
                     //alert(canvaslist[numofid-1]);
                     for(var i=rect.startY-1;i<rect.startY+rect.h;i++){
                         for(var j=rect.startX-1;j<rect.startX+rect.w;j++){
-                            allarray[numofid-1][i][j]=1;
+                            allarray[numofid-1][i][j]+=Math.pow(2,index);
                         }
                     }//将矩阵储存在大数组中
+                    middleindex=numofid-1;
+                    if(index<8){
+                        index+=1;
+                    }
                 });
                       
                 $("#"+getid).mousemove(function(e){
@@ -443,25 +488,7 @@ function createCanvas(){
                 str=str+formname[i]+":"+formvalue[i]+";";
             }
             feature=str;
-            //alert(feature);
-            //var allform=new Array();
-            //allform=formname.concat(formvalue);
-            //var forma=JSON.stringify(allform);
-            //alert(forma);
-            /*$.ajax({
-                type:"post",
-                url:"/subform",
-                data:str,
-                cache:false,
-                success:function(data){
 
-                    alert(data);
-                },
-                error:function(){
-                    alert("error!");
-                },
-           
-            });*/
             document.getElementById("rightbox").removeChild(oMask);
             $(".canvasdiv").css("display","");
         });
@@ -511,11 +538,23 @@ function createCanvas(){
                 }
             }
         }
-        
-        var theMatrix=JSON.stringify(newallarray);
-
 
         var v = {"V":volume,"patient":uid,"features":feature};
+
+        var theMatrix=JSON.stringify(newallarray);
+
+        $.ajax({
+            type:"post",
+            url:"/matrix",
+            data:theMatrix,
+            cache:false,
+            async:false,
+            success:function(data){
+            },
+            error:function(){
+                alert("error!");
+            },
+        });
 
         $.ajax({
             type:"post",
@@ -524,29 +563,13 @@ function createCanvas(){
             cache:false,
             async:false,
             success:function(data){
-                window.location.href = "/index";
-            },
-            /*error:function(){
-                alert("error!");
-            },*/
-        });
-
-        /*$.ajax({
-            type:"post",
-            url:"/matrix",
-            data:theMatrix,
-            cache:false,
-            async:false,
-            success:function(data){
+                alert("提交成功！");
                 window.location.href = "/index";
             },
             error:function(){
                 alert("error!");
             },
-        });*/
-
-        
-
+        });
     });
 }
 

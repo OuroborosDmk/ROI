@@ -2,7 +2,8 @@ $(document).ready(function(){
 	$("#signup").click(function(){
         var user = $("#zusername").val();
         var pwd = $("#zpassword").val();
-        var pd = {"username":user, "password":pwd};
+        alert(user);
+        var pd = {"zusername":user, "zpassword":pwd};
         $.ajax({
             type:"post",
             url:"/signup",

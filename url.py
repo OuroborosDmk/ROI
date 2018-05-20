@@ -11,7 +11,6 @@ from handlers.main import MainHandler
 from handlers.index import IndexfHandler
 from handlers.index import ResultHandler
 from handlers.index import ShowoneHandler
-from handlers.index import SubformHandler
 from handlers.index import MatrixHandler
 
 url = [
@@ -22,6 +21,5 @@ url = [
     (r'/indexf',IndexfHandler),
     (r'/result',ResultHandler),
     (r'/showone',ShowoneHandler),
-    (r'/subform',SubformHandler),
     (r'/matrix',MatrixHandler),
 ]

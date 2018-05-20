@@ -9,8 +9,8 @@ class SignupHandler(tornado.web.RequestHandler):
         self.render("signup.html")
 
     def post(self):
-        zusername = self.get_argument("username")
-        zpassword = self.get_argument("password")
+        zusername = self.get_argument("zusername")
+        zpassword = self.get_argument("zpassword")
         try:
             sql = "INSERT INTO users(username,password) VALUES (" + zusername +","+ zpassword +")"
             cur.execute(sql)

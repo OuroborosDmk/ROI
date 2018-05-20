@@ -8,7 +8,6 @@ from methods.db import conn
 from methods.db import cur
 import tornado.escape
 
-x="1"
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("index.html")
@@ -100,14 +99,6 @@ class ShowoneHandler(tornado.web.RequestHandler):
         '''
         self.write({"username":line,"patientid":db_id,"voftumour":db_v,"feature":db_f})
         #self.write(str());
-
-class SubformHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.render("main.html")
-    def post(self):
-        inform = tornado.escape.json_decode(self.request.body)
-
-        self.write(inform)
         
 class MatrixHandler(tornado.web.RequestHandler):
     def get(self):
@@ -129,12 +120,15 @@ class MatrixHandler(tornado.web.RequestHandler):
         username=f.readline()
         username=username.strip('\n') 
         uid=alllist[1]
-        path="D:\Python34\myweb\static\Matrix\\"+uid+"\matrix.txt";
-        f = open(path,'a')
+        folder=os.path.exists("D:\\Python34\\myweb\\static\\Matrix\\"+uid+"\\"+username)
+        if not folder:
+            os.makedirs("D:\\Python34\\myweb\\static\\Matrix\\"+uid+"\\"+username)
+        f=open("D:\\Python34\\myweb\\static\\Matrix\\"+uid+"\\"+username+"\\"+"matrix"+".txt","a")
         f.seek(0)
         f.truncate()
         f.write(str(matrixa))
         f.close()
+        '''
         try:
             sql = "INSERT INTO Matrix(username,patientid,dpath) VALUES ('" + username +"','"+ uid +"','"+ path +"')"
             cur.execute(sql)
@@ -142,4 +136,5 @@ class MatrixHandler(tornado.web.RequestHandler):
 
         except:
             conn.rollback()
+        '''
             
