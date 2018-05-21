@@ -9,10 +9,13 @@ function createCanvas(){
     var getid;//Cnavas的标号
     var area=0;//圈出的面积
     var volume=100;//肿瘤体积
+    var showcount=0;//如果不全标注判断标注几张图片
+    var showimg=new Array();//储存不全标注图片的序号
     var theformyon=0;//肿瘤类型按钮是否可用,0为可用
     var thetableyon=0;//显示结果类型按钮是否可用,0为可用 
     var thenumofpic=parseInt(numofpic);//强制类型转换 
     var allarray=new Array();//储存所有结果矩阵的大数组
+    var allarea=new Array();//储存面积的数组
     var canvaswidth=704;
     var canvasheight=701;
     var feature="";
@@ -63,7 +66,7 @@ function createCanvas(){
         }//生成与需要标注的图像张数相同的canvas
 
         for(var i=1;i<=thenumofpic;i++){
-            imgpath="/static/pic/qwer/"+newimglist[i-1];
+            imgpath="/static/pic/"+uid+"/"+newimglist[i-1];
             var createc=$("<canvas></canvas>");
             $("#canvasdiv"+i).append(createc);
             createc.attr("class","mycanvas")
@@ -75,20 +78,21 @@ function createCanvas(){
     }
     else{
         for(var i=1;i<=showcount;i++){
+            var themiddlecount=parseInt(showimg[i-1]);
             var created=$("<div></div>");
             $("#rightbox").append(created);
             created.attr("class","canvasdiv")
-                   .attr("id","canvasdiv"+i);
+                   .attr("id","canvasdiv"+themiddlecount);
         }
         for(var i=1;i<=showcount;i++){
-            var middlecount=showimg[showcount];
-            imgpath="/static/pic/qwer/"+newimglist[middlecount];
+            var middlecount=parseInt(showimg[i-1]);
+            imgpath="/static/pic/"+uid+"/"+newimglist[middlecount-1];
             var createc=$("<canvas></canvas>");
-            $("#canvasdiv"+i).append(createc);
+            $("#canvasdiv"+middlecount).append(createc);
             createc.attr("class","mycanvas")
                    .attr("width","195px")
                    .attr("height","150px")
-                   .attr("id","Canvas"+i);
+                   .attr("id","Canvas"+middlecount);
             createc.css("background-image","url("+imgpath+")");
         }//生成与需要标注的图像张数相同的canvas
     }
@@ -102,7 +106,8 @@ function createCanvas(){
     
     $("canvas").click(function(e){
         if(clicksign==0){
-            getid=$(e.target).attr('id'); 
+            getid=$(e.target).attr('id');
+            alert(getid);
             openNew();
         }
     });//点击要标注的canvas还原大小以进行标注
@@ -147,14 +152,6 @@ function createCanvas(){
             returntools.innerHTML="返回";
             tools.appendChild(returntools);
         
-        //var ctx=$("#"+getid)[0].getContext('2d');
-
-        //设置Canvas的left和top
-        //var listid=String(getid);
-        //listid=listid.replace(/Canvas/,"");
-        //listid=parseInt(listid);
-        //需要标注的影像资料路径
-        
         $("#rightbox").css("overflow","hidden");
         $(".canvasdiv").css("visibility","hidden");
         $("#"+getid).css("z-index","501")
@@ -171,6 +168,7 @@ function createCanvas(){
     
         //点击return关闭Canvas
         $("#returntool").click(function(){
+            var count=0;
             var returnsign=confirm("确认返回？");
             if(returnsign==true){
                 var cxt=$("#"+getid)[0].getContext("2d");
@@ -188,6 +186,14 @@ function createCanvas(){
                 clicksign=0;
                 arr=[];
                 index=0;
+                for(var i=0;i<canvasheight;i++){
+                    for(var j=0;j<canvaswidth;j++){
+                        if(allarray[middleindex][i][j]!=0){
+                            count+=1;
+                        }
+                    }
+                }
+                allarea[middleindex]=count;
                 $("#"+getid).unbind("mousedown mouseup mousemove mouseleave");
             }
         });
@@ -235,49 +241,127 @@ function createCanvas(){
             var lastX,lastY;
             var ctx;
             var startX,startY;
-            var coordinateX=new Array();
-            var coordinateY=new Array();
+            var locationX=new Array();
+            var locationY=new Array();
+            var maxX,maxY,minX,minY;
+            var maxXy,maxYx,minXy,minYx;
+            var sum=0;//回转数法角度总和
+            var countofx=0;//与边界相交几次
+            var hsum=0;//回转数
+            var angle;//回转数角度
              
             function InitThis() {
                 ctx=$("#"+getid)[0].getContext('2d');
              
                 $("#"+getid).mousedown(function(e){
+                    if(index>=8){
+                        alert("达到标记上限！");
+                        return false;
+                    }
                     mousePressed=true;
                     Draw(e.pageX-$(this).offset().left,e.pageY-$(this).offset().top,false);
                     coordinateX=[];
                     coordinateY=[];
-                    //coordinateX.push(e.pageX-$(this).offset().left);
-                    //coordinateY.push(e.pageY-$(this).offset().top);
                     startX=e.pageX-$(this).offset().left;
                     startY=e.pageY-$(this).offset().top;
                 });
              
                 $("#"+getid).mousemove(function(e){
                     if(mousePressed){
-                        //coordinateX.push(e.pageX-$(this).offset().left);
-                        //coordinateY.push(e.pageY-$(this).offset().top);
                         Draw(e.pageX-$(this).offset().left,e.pageY-$(this).offset().top,true);
                     }
+                    function getLocation(x, y){  
+                            var mouse=$("#"+getid)[0].getBoundingClientRect();  
+                            return {  
+                                x:(x-mouse.left)*(704/mouse.width),  
+                                y:(y-mouse.top)*(701/mouse.height)
+                            };  
+                    }
+                    var lofmouse=getLocation(e.clientX,e.clientY);
+                    locationX.push(parseInt(lofmouse.x));
+                    locationY.push(parseInt(lofmouse.y));
                 });
              
                 $("#"+getid).mouseup(function(e){
+                    var middlecount=0;
                     mousePressed=false;
                     
                     if(parseInt(startX)!=parseInt(lastX)||parseInt(startY)!=parseInt(lastY)){
                         ctx.beginPath();
                         ctx.moveTo(lastX,lastY);
                         ctx.lineTo(startX,startY);
-                        ctx.strokeStyle="#f36";
+                        ctx.strokeStyle="#0000FF";
                         ctx.lineWidth=1;
                         ctx.lineJoin="round";
                         ctx.closePath();
                         ctx.stroke();
+                        //ctx.fillStyle="#f36";
+                        //ctx.fill;
                     }
-                    alert(coordinateX.length);
-                    alert(coordinateY.length);
                     arr.push(ctx.getImageData(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height));
-                });
+                    var numofid=String(getid);
+                    area=1;
+                    numofid=numofid.replace(/Canvas/,"");
+                    numofid=parseInt(numofid);
+                    canvaslist[numofid-1]=area;
+                    maxX=locationX[0];
+                    maxY=locationY[0];
+                    minX=locationX[0];
+                    minY=locationY[0];
+                    for(var i=0;i<locationX.length;i++){
+                        if(maxX<locationX[i]){
+                            maxX=locationX[i];
+                            maxXy=i;
+                        }
+                    }
+                    maxXy=parseInt(locationY[maxXy]);
 
+                    for(var i=0;i<locationX.length;i++){
+                        if(minX>locationX[i]){
+                            minX=locationX[i];
+                            minXy=i;
+                        }
+                    }
+                    minXy=parseInt(locationY[minXy]);
+
+                    for(var i=0;i<locationY.length;i++){
+                        if(maxY<locationY[i]){
+                            maxY=locationY[i];
+                            maxYx=i;
+                        }
+                    }
+                    maxYx=parseInt(locationX[maxYx]);
+
+                    for(var i=0;i<locationY.length;i++){
+                        if(minY>locationY[i]){
+                            minY=locationY[i];
+                            minYx=i;
+                        }
+                    }
+                    minYx=parseInt(locationX[minYx]);
+
+                    for(var i=0;i<canvasheight;i++){
+                        for(var j=0;j<canvaswidth;j++){
+                            if(i<maxY&&i>minY&&j<maxX&&j>minX){
+                                
+                                allarray[numofid-1][i][j]+=Math.pow(2,index);
+                            }           
+                        }
+                    }   
+                    for(var i=0;i<canvasheight;i++){
+                        for(var j=0;j<canvaswidth;j++){
+                            if(allarray[numofid-1][i][j]==0){
+                                middlecount+=1;
+                            }
+                        }
+                    } 
+                    //alert(middlecount);
+                    middleindex=numofid-1;
+                    if(index<8){
+                        index+=1;
+                    }
+                });
+    
                 $("#"+getid).mouseleave(function(e){
                     mousePressed=false;
                 });
@@ -286,7 +370,7 @@ function createCanvas(){
             function Draw(x,y,isDown){
                 if (isDown){
                     ctx.beginPath();
-                    ctx.strokeStyle="#f36";
+                    ctx.strokeStyle="#0000FF";
                     ctx.lineWidth=1;
                     ctx.lineJoin="round";
                     ctx.moveTo(lastX,lastY);
@@ -347,8 +431,6 @@ function createCanvas(){
                     if(index<8){
                         index+=1;
                     }
-                    //console.log(roundx);
-                    //console.log(roundy);
                 });
 
                 $("#"+getid).mousemove(function(e){
@@ -364,7 +446,7 @@ function createCanvas(){
                         ctx.arc(rx+x,ry+y,r,0,Math.PI*2);
                         ctx.stroke();
                         ctx.lineWidth=0.5;
-                        ctx.strokeStyle="#FFFFFF"; 
+                        ctx.strokeStyle="#0000FF"; 
                     }
                 });
 
@@ -427,7 +509,7 @@ function createCanvas(){
                     }
                         ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
                         ctx.lineWidth=0.5;
-                        ctx.strokeStyle="#FFFFFF";
+                        ctx.strokeStyle="#0000FF";
                     }
                 });
                       
@@ -488,7 +570,7 @@ function createCanvas(){
                 str=str+formname[i]+":"+formvalue[i]+";";
             }
             feature=str;
-
+            alert("填写完毕！");
             document.getElementById("rightbox").removeChild(oMask);
             $(".canvasdiv").css("display","");
         });
@@ -502,12 +584,10 @@ function createCanvas(){
         }
 
         var ilist=new Array();//储存操作过的图像序号
-        var mlist=new Array();//储存操作过的图像面积
 
-        for(var i=0;i<thenumofpic;i++){//输出储存面积数组中的值
+        for(var i=0;i<thenumofpic;i++){//获取哪几个图像被标记过
             if(canvaslist[i]!=0){
                 ilist.push(i+1);
-                mlist.push(canvaslist[i]);
             }
         }
 
@@ -539,7 +619,13 @@ function createCanvas(){
             }
         }
 
-        var v = {"V":volume,"patient":uid,"features":feature};
+        var areastr="";
+        for(var i=0;i<newarrayl;i++){
+            basd=parseInt(ilist[i]);
+            areastr=areastr+ilist[i]+":"+allarea[basd-1]+";     ";
+        }
+
+        var v = {"V":volume,"patient":uid,"features":feature,"area":areastr};
 
         var theMatrix=JSON.stringify(newallarray);
 

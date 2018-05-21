@@ -51,6 +51,7 @@ class ResultHandler(tornado.web.RequestHandler):
         V=self.get_argument("V")
         patientid=self.get_argument("patient")
         feature=self.get_argument("features")
+        area=self.get_argument("area")
         f=open(r"D:\Python34\myweb\static\value\username.txt","r")
         line=f.readline()
         line=line.strip('\n')
@@ -63,12 +64,13 @@ class ResultHandler(tornado.web.RequestHandler):
         f.close()
         '''
         try:
-            sql = "INSERT INTO informations(username,patientname,voftumour,feature) VALUES ('" + line + "','"+ patientid +"',"+ V +",'"+ feature +"')"
+            sql = "INSERT INTO informations(username,patientname,voftumour,area,feature) VALUES ('" + line + "','"+ patientid +"',"+ V +",'"+area+"','"+ feature +"')"
             cur.execute(sql)
             conn.commit()
 
         except:
             conn.rollback()
+            return false
 
 class ShowoneHandler(tornado.web.RequestHandler):
     def get(self):
@@ -90,14 +92,15 @@ class ShowoneHandler(tornado.web.RequestHandler):
         user_infos=cur.fetchall()
         db_id=user_infos[count][2]
         db_v=str(user_infos[count][3])
-        db_f=user_infos[count][4]
+        db_a=user_infos[count][4]
+        db_f=user_infos[count][5]
         '''
         sql = "select * from matrix where username='" + line + "'"
         cur.execute(sql)
         user_infos=cur.fetchall()
         db_path=user_infos[0][3]
         '''
-        self.write({"username":line,"patientid":db_id,"voftumour":db_v,"feature":db_f})
+        self.write({"username":line,"patientid":db_id,"voftumour":db_v,"feature":db_f,"area":db_a})
         #self.write(str());
         
 class MatrixHandler(tornado.web.RequestHandler):

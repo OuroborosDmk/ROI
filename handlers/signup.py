@@ -11,12 +11,20 @@ class SignupHandler(tornado.web.RequestHandler):
     def post(self):
         zusername = self.get_argument("zusername")
         zpassword = self.get_argument("zpassword")
-        try:
-            sql = "INSERT INTO users(username,password) VALUES (" + zusername +","+ zpassword +")"
-            cur.execute(sql)
-            conn.commit()
+        sql = "select * from users where username ='" + zusername + "'"
+        cur.execute(sql)
+        lines = cur.fetchall()
+        if lines:
+            self.write("error")
+        else:
+            try:
+                sql = "INSERT INTO users(username,password) VALUES (" + zusername +","+ zpassword +")"
+                cur.execute(sql)
+                conn.commit()
 
-        except:
-            conn.rollback()
+            except:
+                conn.rollback()   
+            self.write("ok")      
+        
         
         

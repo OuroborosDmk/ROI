@@ -8,6 +8,7 @@ $(document).ready(function(){
     var volume;
     var patientid;
     var path;
+    var area;
     $.ajax({
         async:false,
         type:"post",
@@ -22,10 +23,10 @@ $(document).ready(function(){
     getid=userid.split(",");
 
     $("#idtable").html(" ");
-    $("#idtable").append("<tr><td>ID</td><td>姓名</td><td>性别</td><td>案例数量</td></tr>");
+    $("#idtable").append("<tr><td>ID</td><td>姓名</td><td>性别</td></tr>");
     count=parseInt(count);
     for(var i=0;i<count;i++){
-        var newbox=$("<tr><td>"+(i+1)+"</td><td>"+getid[i]+"</td><td>男</td><td>"+count+"</td></tr>");
+        var newbox=$("<tr><td>"+(i+1)+"</td><td>"+getid[i]+"</td><td>男</td></tr>");
         $("#idtable").append(newbox);
         newbox.attr("class","newbox");
         newbox.attr("id",getid[i]);
@@ -49,10 +50,10 @@ $(document).ready(function(){
 
     $("#image").click(function(){
         $("#idtable").html(" ");
-        $("#idtable").append("<tr><td>ID</td><td>姓名</td><td>性别</td><td>案例数量</td></tr>");
+        $("#idtable").append("<tr><td>ID</td><td>姓名</td><td>性别</td></tr>");
         //count=parseInt(count);
         for(var i=0;i<count;i++){
-            newbox=$("<tr><td>"+(i+1)+"</td><td>"+getid[i]+"</td><td>男</td><td>"+count+"</td></tr>");
+            newbox=$("<tr><td>"+(i+1)+"</td><td>"+getid[i]+"</td><td>男</td></tr>");
             $("#idtable").append(newbox);
             newbox.attr("class","newbox");
             newbox.attr("id",getid[i]);
@@ -78,7 +79,7 @@ $(document).ready(function(){
     $("#history").click(function(){
         var usercount=0;
         $("#idtable").html(" ");
-        $("#idtable").append("<tr><td>病人姓名</td><td>性别</td><td>肿瘤体积</td><td>特征</td></tr>")
+        $("#idtable").append("<tr><td>病人姓名</td><td>性别</td><td>肿瘤体积</td><td>标注面积</td><td>特征</td><td>标注结果</td></tr>")
         $.ajax({
             async:false,
             type:"get",
@@ -86,7 +87,7 @@ $(document).ready(function(){
             cache:false,
             success:function(data){
                 usercount=data;
-                alert(data);
+                alert("一共查询到"+data+"条信息！");
             },
         });
 
@@ -103,19 +104,14 @@ $(document).ready(function(){
                     //alert(data);
                 },
             });
+            username=getjson1.username;
             volume=getjson1.voftumour;
             patientid=getjson1.patientid;
             feature=getjson1.feature;
-            $("#idtable").append("<tr><td>"+patientid+"</td><td>男</td><td>"+volume+"</td><td>"+feature+"</td></tr>");
+            area=getjson1.area;
+            var txtpath="static/Matrix/"+patientid+"/"+username+"/matrix.txt";
+            $("#idtable").append("<tr><td>"+patientid+"</td><td>男</td><td>"+volume+"</td><td>"+area+"</td><td>"+feature+"</td><td><a href="+txtpath+" download=\"show.txt\">点此下载</a></td></tr>");
         }
-        /*username=getjson1.username;
-        volume=getjson1.voftumour;
-        patientid=getjson1.patientid;
-        feature=getjson1.feature;
-        //for(var j=0;j<ilist.length;j++){
-        $("#idtable").append("<tr><td>"+patientid+"</td><td>男</td><td>"+volume+"</td><td>"+feature+"</td></tr>");//输出结果表格
-
-        //}*/
     });
     
     $("#end").click(function(){

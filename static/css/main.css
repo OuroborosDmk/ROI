@@ -50,9 +50,10 @@ h1{
 .leftbox{
 	float:left;
 	width:10%;
-	height:667px;
+	height:694px;
 	background-color:#C0C0C0;
 	border-right:1px solid black;
+	border-bottom:1px solid black;
 	box-sizing:border-box;
 }
 .rightbox{
@@ -65,7 +66,7 @@ h1{
 	float:left;
 	border:1px solid white;
 	width:195px;
-	height:332px;
+	height:346px;
 }
 .mycanvas{
 	margin-top:70px;
