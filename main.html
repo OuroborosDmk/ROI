@@ -203,6 +203,7 @@
             var thenumofpic=parseInt(numofpic);//强制类型转换
             //var savearray=new Array();//暂时储存结果矩阵
             var allarray=new Array();//储存所有结果矩阵的大数组
+            var allarea=new Array();//储存面积的数组
             var canvaswidth=704;
             var canvasheight=701;
             var index=0;//储存矩阵指数
@@ -327,6 +328,7 @@
                         
                 //点击return关闭Canvas
                 $("#returntool").click(function(){
+                    var count=0;
                     var returnsign=confirm("确认返回？");
                     if(returnsign==true){
                         var cxt=$("#"+getid)[0].getContext("2d");
@@ -343,6 +345,15 @@
                         clicksign=0;
                         arr=[];
                         index=0;
+                        for(var i=0;i<canvasheight;i++){
+                            for(var j=0;j<canvaswidth;j++){
+                                if(allarray[middleindex][i][j]!=0){
+                                    count+=1;
+                                }
+                            }
+                        }
+                        allarea[middleindex]=count;
+                        $("#"+getid).unbind("mousedown mouseup mousemove mouseleave");
                     }
                 });
 
@@ -354,7 +365,6 @@
                     if(arr.length>0){
                         ctx.putImageData(arr[arr.length-1],0,0,0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
                     }
-                    alert(index-1);
                     if(index-1>0){
                         for(var i=0;i<canvasheight;i++){
                             for(var j=0;j<canvaswidth;j++){
@@ -382,7 +392,7 @@
                     var cxt=$("#"+getid)[0].getContext("2d");
                     arr=[];
                     cxt.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
-
+                    index=0;
                 });
 
                 $("#othertool").click(function(){//用不规则线标注图像
@@ -391,32 +401,48 @@
                     var lastX,lastY;
                     var ctx;
                     var startX,startY;
-                    var coordinateX=new Array();
-                    var coordinateY=new Array();
+                    var locationX=new Array();
+                    var locationY=new Array();
+                    var maxX,maxY,minX,minY;
+                    var maxXy,maxYx,minXy,minYx;
+                    var sum=0;//回转数法角度总和
+                    var countofx=0;//与边界相交几次
+                    var hsum=0;//回转数
+                    var angle;//回转数角度
                      
                     function InitThis() {
                         ctx=$("#"+getid)[0].getContext('2d');
                      
                         $("#"+getid).mousedown(function(e){
+                            if(index>=8){
+                                alert("达到标记上限！");
+                                return false;
+                            }
                             mousePressed=true;
                             Draw(e.pageX-$(this).offset().left,e.pageY-$(this).offset().top,false);
-                            coordinateX=[];
-                            coordinateY=[];
-                            //coordinateX.push(e.pageX-$(this).offset().left);
-                            //coordinateY.push(e.pageY-$(this).offset().top);
                             startX=e.pageX-$(this).offset().left;
                             startY=e.pageY-$(this).offset().top;
                         });
                      
                         $("#"+getid).mousemove(function(e){
+
                             if(mousePressed){
-                                //coordinateX.push(e.pageX-$(this).offset().left);
-                                //coordinateY.push(e.pageY-$(this).offset().top);
                                 Draw(e.pageX-$(this).offset().left,e.pageY-$(this).offset().top,true);
+                                function getLocation(x, y){  
+                                    var mouse=$("#"+getid)[0].getBoundingClientRect();  
+                                    return {  
+                                        x:(x-mouse.left)*(704/mouse.width),  
+                                        y:(y-mouse.top)*(701/mouse.height)
+                                    };  
+                                }
+                                var lofmouse=getLocation(e.clientX,e.clientY);
+                                locationX.push(parseInt(lofmouse.x));
+                                locationY.push(parseInt(lofmouse.y));
                             }
                         });
                      
                         $("#"+getid).mouseup(function(e){
+                            var middlecount=0;
                             mousePressed=false;
                             
                             if(parseInt(startX)!=parseInt(lastX)||parseInt(startY)!=parseInt(lastY)){
@@ -428,10 +454,120 @@
                                 ctx.lineJoin="round";
                                 ctx.closePath();
                                 ctx.stroke();
+                                ctx.fillStyle="#f36";
+                                ctx.fill;
                             }
-                            alert(coordinateX.length);
-                            alert(coordinateY.length);
                             arr.push(ctx.getImageData(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height));
+                            var numofid=String(getid);
+                            numofid=numofid.replace(/Canvas/,"");
+                            numofid=parseInt(numofid);
+                            maxX=locationX[0];
+                            maxY=locationY[0];
+                            minX=locationX[0];
+                            minY=locationY[0];
+                            for(var i=0;i<locationX.length;i++){
+                                if(maxX<locationX[i]){
+                                    maxX=locationX[i];
+                                    maxXy=i;
+                                }
+                            }
+                            maxXy=parseInt(locationY[maxXy]);
+
+                            for(var i=0;i<locationX.length;i++){
+                                if(minX>locationX[i]){
+                                    minX=locationX[i];
+                                    minXy=i;
+                                }
+                            }
+                            minXy=parseInt(locationY[minXy]);
+
+                            for(var i=0;i<locationY.length;i++){
+                                if(maxY<locationY[i]){
+                                    maxY=locationY[i];
+                                    maxYx=i;
+                                }
+                            }
+                            maxYx=parseInt(locationX[maxYx]);
+
+                            for(var i=0;i<locationY.length;i++){
+                                if(minY>locationY[i]){
+                                    minY=locationY[i];
+                                    minYx=i;
+                                }
+                            }
+                            minYx=parseInt(locationX[minYx]);
+
+                            for(var i=0;i<canvasheight;i++){
+                                for(var j=0;j<canvaswidth;j++){
+                                    if(i<maxY&&i>minY&&j<maxX&&j>minX){
+                                        
+                                        allarray[numofid-1][i][j]+=Math.pow(2,index);
+                                    }
+                                    /*
+                                    if((!isNaN(minX))&&(!isNaN(minXy))){
+                                        angle = Math.atan2(minXy - i, minX - j) - Math.atan2(minY- i, minYx - j);
+                                        if(angle >= Math.PI) {
+                                            angle = angle - Math.PI * 2;
+                                        } 
+                                        else if(angle <= -Math.PI) {
+                                            angle = angle + Math.PI * 2;
+                                        }
+                                        sum += angle;
+                                    }
+                                    if((!isNaN(minYx))&&(!isNaN(minY))){
+                                        angle = Math.atan2(minY - i, minYx - j) - Math.atan2(maxXy - i, maxX - j);
+                                        if(angle >= Math.PI) {
+                                            angle = angle - Math.PI * 2;
+                                        } 
+                                        else if(angle <= -Math.PI) {
+                                            angle = angle + Math.PI * 2;
+                                        }
+                                        sum += angle;
+                                    }
+
+                                    if((!isNaN(maxX))&&(!isNaN(maxXy))){
+                                        angle2 = Math.atan2(maxXy - i, maxX - j) - Math.atan2(maxY - i, maxYx - j);
+                                        if(angle >= Math.PI) {
+                                            angle = angle - Math.PI * 2;
+                                        } 
+                                        else if(angle <= -Math.PI) {
+                                            angle = angle + Math.PI * 2;
+                                        }
+                                        sum += angle;
+                                    }
+
+                                    if((!isNaN(maxYx))&&(!isNaN(maxY))){
+                                        angle3 = Math.atan2(maxY - i, maxYx - j) - Math.atan2(minXy - i, minX - j);
+                                        if(angle >= Math.PI) {
+                                            angle = angle - Math.PI * 2;
+                                        } 
+                                        else if(angle <= -Math.PI) {
+                                            angle = angle + Math.PI * 2;
+                                        }
+                                        sum += angle;
+                                    }
+                                    
+                                    
+                                    hsum=parseInt(Math.round(sum / Math.PI));
+
+                                    if(hsum!=0){
+                                        allarray[numofid-1][i][j]+=Math.pow(2,index);
+                                    } 
+                                    */           
+                                }
+                            }   
+                            for(var i=0;i<canvasheight;i++){
+                                for(var j=0;j<canvaswidth;j++){
+                                    if(allarray[numofid-1][i][j]==0){
+                                        middlecount+=1;
+                                    }
+                                }
+                            } 
+                            alert(middlecount);
+                            middleindex=numofid-1;
+                            if(index<8){
+                                index+=1;
+                            }
                         });
 
                         $("#"+getid).mouseleave(function(e){
@@ -449,38 +585,6 @@
                             ctx.lineTo(x,y);
                             ctx.closePath();
                             ctx.stroke();
-                            if((parseInt(x)<parseInt(lastX))&&(parseInt(y)<parseInt(lastY))){
-                            for(var i=parseInt(lastX);i>parseInt(x);i--){
-                                coordinateX.push(i);
-                            }
-                            for(var j=parseInt(lastY);j>parseInt(y);j--){
-                                coordinateY.push(j);
-                            }
-                        }
-                        else if((parseInt(x)<parseInt(lastX))&&(parseInt(y)>parseInt(lastY))){
-                            for(var i=parseInt(lastX);i>parseInt(x);i--){
-                                coordinateX.push(i);
-                            }
-                            for(var j=parseInt(lastY);j<parseInt(y);j++){
-                                coordinateY.push(j);
-                            }
-                        }
-                        else if((parseInt(x)>parseInt(lastX))&&(parseInt(y)<parseInt(lastY))){
-                            for(var i=parseInt(lastX);i<parseInt(x);i++){
-                                coordinateX.push(i);
-                            }
-                            for(var j=parseInt(lastY);j>parseInt(y);j--){
-                                coordinateY.push(j);
-                            }
-                        }
-                        else if((parseInt(x)>parseInt(lastX))&&(parseInt(y)>parseInt(lastY))){
-                            for(var i=parseInt(lastX);i<parseInt(x);i++){
-                                coordinateX.push(i);
-                            }
-                            for(var j=parseInt(lastY);j<parseInt(y);j++){
-                                coordinateY.push(j);
-                            }
-                        }
                         }
                         lastX=x; lastY=y;
                     }
@@ -526,16 +630,14 @@
                                 for(var j=0;j<canvaswidth;j++){
                                     if((Math.pow(i-roundx,2)+Math.pow(j-roundy,2)==Math.pow(r,2))
                                         ||(Math.pow(i-roundx,2)+Math.pow(j-roundy,2)<Math.pow(r,2))){
-                                        allarray[numofid-1][i][j]+=Math.pow(2,index);
-                                        middleindex=numofid-1;
+                                            allarray[numofid-1][i][j]+=Math.pow(2,index);
                                     }
                                 }
                             }
+                            middleindex=numofid-1;
                             if(index<8){
                                 index+=1;
                             }
-                            //console.log(roundx);
-                            //console.log(roundy);
                         });
 
                         $("#"+getid).mousemove(function(e){
@@ -596,9 +698,10 @@
                             for(var i=rect.startY-1;i<rect.startY+rect.h;i++){
                                 for(var j=rect.startX-1;j<rect.startX+rect.w;j++){
                                     allarray[numofid-1][i][j]+=Math.pow(2,index);
-                                    middleindex=numofid-1;
+                                    
                                 }
                             }//将矩阵储存在大数组中
+                            middleindex=numofid-1;
                             if(index<8){
                                 index+=1;
                             }
@@ -734,16 +837,7 @@
                     }
                 }
 
-                var count=0;
-                for(var i=0;i<newarrayl;i++){
-                    for(var j=0;j<canvasheight;j++){
-                        for(var k=0;k<canvaswidth;k++){
-                            if(newallarray[i][j][k]!=0){
-                                count+=1;
-                            }
-                        }
-                    }
-                }
+                console.log(allarray[0]);
                 console.log(newallarray);
             });
 
