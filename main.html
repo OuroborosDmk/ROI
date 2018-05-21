@@ -449,18 +449,20 @@
                                 ctx.beginPath();
                                 ctx.moveTo(lastX,lastY);
                                 ctx.lineTo(startX,startY);
-                                ctx.strokeStyle="#f36";
+                                ctx.strokeStyle="#0000FF";
                                 ctx.lineWidth=1;
                                 ctx.lineJoin="round";
                                 ctx.closePath();
                                 ctx.stroke();
-                                ctx.fillStyle="#f36";
-                                ctx.fill;
+                                //ctx.fillStyle="#0000FF";
+                                //ctx.fill;
                             }
                             arr.push(ctx.getImageData(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height));
                             var numofid=String(getid);
+                            area=1;
                             numofid=numofid.replace(/Canvas/,"");
                             numofid=parseInt(numofid);
+                            canvaslist[numofid-1]=area;
                             maxX=locationX[0];
                             maxY=locationY[0];
                             minX=locationX[0];
@@ -558,7 +560,7 @@
                             }   
                             for(var i=0;i<canvasheight;i++){
                                 for(var j=0;j<canvaswidth;j++){
-                                    if(allarray[numofid-1][i][j]==0){
+                                    if(allarray[numofid-1][i][j]!=0){
                                         middlecount+=1;
                                     }
                                 }
@@ -568,17 +570,20 @@
                             if(index<8){
                                 index+=1;
                             }
+                            console.log(allarray[numofid-1]);
                         });
-
-                        $("#"+getid).mouseleave(function(e){
+                        
+                        
+                        $("#"+getid).mouseleave(function(){
                             mousePressed=false;
                         });
+                        
                     }
                      
                     function Draw(x,y,isDown){
                         if (isDown){
                             ctx.beginPath();
-                            ctx.strokeStyle="#f36";
+                            ctx.strokeStyle="#0000FF";
                             ctx.lineWidth=1;
                             ctx.lineJoin="round";
                             ctx.moveTo(lastX,lastY);
@@ -653,7 +658,7 @@
                                 ctx.arc(rx+x,ry+y,r,0,Math.PI*2);
                                 ctx.stroke();
                                 ctx.lineWidth=0.5;
-                                ctx.strokeStyle="#FFFFFF"; 
+                                ctx.strokeStyle="#0000FF"; 
                             }
                         });
 
@@ -717,7 +722,7 @@
                             }
                                 ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
                                 ctx.lineWidth=0.5;
-                                ctx.strokeStyle="#FFFFFF";
+                                ctx.strokeStyle="#0000FF";
                             }
                         });
                               
@@ -801,12 +806,10 @@
             $("#stepfin").click(function(){//完成操作
 
                 var ilist=new Array();//储存操作过的图像序号
-                var mlist=new Array();//储存操作过的图像面积
 
-                for(var i=0;i<thenumofpic;i++){//输出储存面积数组中的值
+                for(var i=0;i<thenumofpic;i++){
                     if(canvaslist[i]!=0){
                         ilist.push(i+1);
-                        mlist.push(canvaslist[i]);
                     }
                 }
                 var newarrayl=ilist.length;
@@ -836,8 +839,13 @@
                         }
                     }
                 }
-
-                console.log(allarray[0]);
+                var areastr="";
+                for(var i=0;i<newarrayl;i++){
+                    basd=parseInt(ilist[i]);
+                    areastr=areastr+ilist[i]+":"+allarea[basd-1]+";     ";
+                }
+                alert(areastr);
+                //console.log(allarray[0]);
                 console.log(newallarray);
             });
 
@@ -846,6 +854,7 @@
         createCanvas();
 
 
+        }
         }  
     </script>
 </body>
