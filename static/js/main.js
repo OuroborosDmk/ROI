@@ -625,6 +625,23 @@ function createCanvas(){
             areastr=areastr+ilist[i]+":"+allarea[basd-1]+";     ";
         }
 
+        if(numofpic==1){
+            volume=parseInt(allarea[0])*1;
+        }
+        else if(numofpic%2==0){
+            volume=(parseInt(allarea[thenumofpic/2-1])+parseInt(allarea[thenumofpic/2]))/2*thenumofpic;
+        }
+        else if(numofpic%2==1){
+            volume=parseInt(allarea[(thenumofpic+1)/2-1])*thenumofpic;
+        }
+
+        if(isNaN(volume)){
+            volume=0;
+        }
+        else{
+            volume=parseInt(volume);
+        }
+
         var v = {"V":volume,"patient":uid,"features":feature,"area":areastr};
 
         var theMatrix=JSON.stringify(newallarray);

@@ -64,7 +64,7 @@ class ResultHandler(tornado.web.RequestHandler):
         f.close()
         '''
         try:
-            sql = "INSERT INTO informations(username,patientname,voftumour,area,feature) VALUES ('" + line + "','"+ patientid +"',"+ V +",'"+area+"','"+ feature +"')"
+            sql = "INSERT INTO informations(username,patientname,voftumour,area,feature) VALUES ('" + line + "','"+ patientid +"','"+ V +"','"+area+"','"+ feature +"')"
             cur.execute(sql)
             conn.commit()
 
@@ -126,9 +126,12 @@ class MatrixHandler(tornado.web.RequestHandler):
         folder=os.path.exists("D:\\Python34\\myweb\\static\\Matrix\\"+uid+"\\"+username)
         if not folder:
             os.makedirs("D:\\Python34\\myweb\\static\\Matrix\\"+uid+"\\"+username)
-        f=open("D:\\Python34\\myweb\\static\\Matrix\\"+uid+"\\"+username+"\\"+"matrix"+".txt","a")
+        f=open("D:\\Python34\\myweb\\static\\Matrix\\"+uid+"\\"+username+"\\"+"matrix.txt","a")
         f.seek(0)
         f.truncate()
+        #matrix=str(matrixa)
+        #matrix=matrix.replace("[")
+        #matrix=matrix.replace("]")
         f.write(str(matrixa))
         f.close()
         '''
