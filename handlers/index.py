@@ -129,10 +129,14 @@ class MatrixHandler(tornado.web.RequestHandler):
         f=open("D:\\Python34\\myweb\\static\\Matrix\\"+uid+"\\"+username+"\\"+"matrix.txt","a")
         f.seek(0)
         f.truncate()
-        #matrix=str(matrixa)
-        #matrix=matrix.replace("[")
-        #matrix=matrix.replace("]")
-        f.write(str(matrixa))
+        matrix=str(matrixa)
+        matrix=matrix.replace("[","")
+        matrix=matrix.replace("]","\n")
+        matrix=matrix.replace(",","")
+        matrix=matrix.replace(" ","")
+        matrix=matrix.replace("'","")
+        matrix=matrix.replace("a"," ")
+        f.write(matrix)
         f.close()
         '''
         try:

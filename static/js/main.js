@@ -22,7 +22,15 @@ function createCanvas(){
     var newimglist=new Array();//储存图片路径
     newimglist=imglist.split(",");
     var index=0;//储存矩阵指数
-    var middleindex=0;//储存大数组序列
+    var middleindex=-1;//储存标注图像序列
+    var xmlbuttonsign=0;//判断XML界面是否被点击
+    var middlearray=new Array();//中间数组确认保存后传递给提交结果部分
+    var canvaslist=new Array(thenumofpic);//储存标注过的影像资料序号
+    var surface;//覆盖层
+    
+    for(var i=0;i<thenumofpic;i++){
+        canvaslist[i]=0;
+    }
 
     if(numofpic==1){
         showcount=1;
@@ -40,6 +48,21 @@ function createCanvas(){
         showimg[0]=1;
         showimg[1]=(thenumofpic+1)/2;
         showimg[2]=thenumofpic;
+    }
+
+    for(var i=0;i<thenumofpic;i++){
+        middlearray[i]=new Array();
+        for(var j=0;j<canvasheight;j++){
+            middlearray[i][j]=new Array();
+        }
+    }
+
+    for(var i=0;i<thenumofpic;i++){
+        for(var j=0;j<canvasheight;j++){
+            for(var k=0;k<canvaswidth;k++){
+                middlearray[i][j][k]=0;
+            }
+        }
     }
 
     for(var i=0;i<thenumofpic;i++){
@@ -96,13 +119,6 @@ function createCanvas(){
             createc.css("background-image","url("+imgpath+")");
         }//生成与需要标注的图像张数相同的canvas
     }
-
-    
-    
-    var canvaslist=new Array(thenumofpic);//储存圈出的面积
-    for(var i=0;i<thenumofpic;i++){
-        canvaslist[i]=0;
-    }//初始化数组为0
     
     $("canvas").click(function(e){
         if(clicksign==0){
@@ -114,7 +130,7 @@ function createCanvas(){
     
     function openNew(){//悬浮层弹出，还原canvas大小
         clicksign=1;
-        var rightboxw=document.getElementById("rightbox").clientWidth;
+        var rightboxw=document.getElementById("rightbox").clientWidth;//获取实际宽度
         var oMask=document.createElement("div");
             oMask.id="canvasbg";
             oMask.style.height="667px";
@@ -147,9 +163,13 @@ function createCanvas(){
             revoketools.id="revoketool";
             revoketools.innerHTML="撤销";
             tools.appendChild(revoketools);
+        var savetools=document.createElement("button");
+            savetools.id="savetool";
+            savetools.innerHTML="保存并返回";
+            tools.appendChild(savetools);
         var returntools=document.createElement("button");
             returntools.id="returntool";
-            returntools.innerHTML="返回";
+            returntools.innerHTML="不保存并返回";
             tools.appendChild(returntools);
         
         $("#rightbox").css("overflow","hidden");
@@ -165,10 +185,49 @@ function createCanvas(){
                     //.css("float","left");
         $("#"+getid).attr("width","704px")
                     .attr("height","701px");//Canvas的高宽不能通过CSS设置，只能通过属性直接设置                 
-    
+        
+        $("#savetool").click(function(){
+            var returnsign=confirm("确认返回？");
+            if(returnsign==true){
+                var count=0;
+                if(middleindex!=-1){
+                    for(var i=0;i<canvasheight;i++){
+                        for(var j=0;j<canvaswidth;j++){
+                            if(allarray[middleindex][i][j]!=0){
+                                count+=1;
+                            }
+                        }
+                    }
+                    for(var i=0;i<canvasheight;i++){
+                        for(var j=0;j<canvaswidth;j++){
+                            middlearray[middleindex][i][j]=allarray[middleindex][i][j];
+                        }
+                    }
+                    canvaslist[middleindex]=1;//该资料已经被标注过
+                    allarea[middleindex]=count;
+                    alert("保存成功！");
+                }
+                var cxt=$("#"+getid)[0].getContext("2d");
+                cxt.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
+                document.getElementById("rightbox").removeChild(oMask);
+                document.getElementById("rightbox").removeChild(toolbox);
+                $("#"+getid).css("z-index","auto")
+                            .css("position","static")
+                            .css("margin-top","70px")
+                            .css("visibility","inherit")
+                $("#"+getid).attr("width","195px")
+                            .attr("height","150px");
+                $("#rightbox").css("overflow","visible");
+                $(".canvasdiv").css("visibility","visible");
+                clicksign=0;
+                arr=[];
+                index=0;
+                $("#"+getid).unbind("mousedown mouseup mousemove mouseleave");
+            }
+        });
+
         //点击return关闭Canvas
         $("#returntool").click(function(){
-            var count=0;
             var returnsign=confirm("确认返回？");
             if(returnsign==true){
                 var cxt=$("#"+getid)[0].getContext("2d");
@@ -186,45 +245,46 @@ function createCanvas(){
                 clicksign=0;
                 arr=[];
                 index=0;
-                for(var i=0;i<canvasheight;i++){
-                    for(var j=0;j<canvaswidth;j++){
-                        if(allarray[middleindex][i][j]!=0){
-                            count+=1;
+                $("#"+getid).unbind("mousedown mouseup mousemove mouseleave");
+                if(middleindex!=-1){
+                    for(var i=0;i<canvasheight;i++){
+                        for(var j=0;j<canvaswidth;j++){
+                            allarray[middleindex][i][j]=0;
                         }
                     }
                 }
-                allarea[middleindex]=count;
-                $("#"+getid).unbind("mousedown mouseup mousemove mouseleave");
             }
         });
 
         $("#revoketool").click(function(){//撤销上次操作
             var ctx=$("#"+getid)[0].getContext('2d');
             
-            arr.pop();
-            ctx.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
-            if(arr.length>0){
-                ctx.putImageData(arr[arr.length-1],0,0,0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
-            }
-            if(index-1>0){
-                for(var i=0;i<canvasheight;i++){
-                    for(var j=0;j<canvaswidth;j++){
-                        if(allarray[middleindex][i][j]>=Math.pow(2,(index-1))){
-                            allarray[middleindex][i][j]-=Math.pow(2,(index-1));
+            if(middleindex!=-1){
+                arr.pop();
+                ctx.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
+                if(arr.length>0){
+                    ctx.putImageData(arr[arr.length-1],0,0,0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
+                }
+                if(index-1>0){
+                    for(var i=0;i<canvasheight;i++){
+                        for(var j=0;j<canvaswidth;j++){
+                            if(allarray[middleindex][i][j]>=Math.pow(2,(index-1))){
+                                allarray[middleindex][i][j]-=Math.pow(2,(index-1));
+                            }
                         }
                     }
+                    index-=1;
                 }
-                index-=1;
-            }
-            else if(index-1==0){
-                for(var i=0;i<canvasheight;i++){
-                    for(var j=0;j<canvaswidth;j++){
-                        if(allarray[middleindex][i][j]==1){
-                            allarray[middleindex][i][j]=0;
+                else if(index-1==0){
+                    for(var i=0;i<canvasheight;i++){
+                        for(var j=0;j<canvaswidth;j++){
+                            if(allarray[middleindex][i][j]==1){
+                                allarray[middleindex][i][j]=0;
+                            }
                         }
                     }
+                    index=0;
                 }
-                index=0;
             }
         });
 
@@ -240,18 +300,13 @@ function createCanvas(){
             var mousePressed=false;
             var lastX,lastY;
             var ctx;
-            var startX,startY;
+            var startX,startY;//储存开始坐标
             var locationX=new Array();
             var locationY=new Array();
             var maxX,maxY,minX,minY;
-            var maxXy,maxYx,minXy,minYx;
-            var sum=0;//回转数法角度总和
-            var countofx=0;//与边界相交几次
-            var hsum=0;//回转数
-            var angle;//回转数角度
              
             function InitThis() {
-                ctx=$("#"+getid)[0].getContext('2d');
+                ctx=$("#"+getid)[0].getContext("2d");
              
                 $("#"+getid).mousedown(function(e){
                     if(index>=8){
@@ -260,8 +315,6 @@ function createCanvas(){
                     }
                     mousePressed=true;
                     Draw(e.pageX-$(this).offset().left,e.pageY-$(this).offset().top,false);
-                    coordinateX=[];
-                    coordinateY=[];
                     startX=e.pageX-$(this).offset().left;
                     startY=e.pageY-$(this).offset().top;
                 });
@@ -295,15 +348,11 @@ function createCanvas(){
                         ctx.lineJoin="round";
                         ctx.closePath();
                         ctx.stroke();
-                        //ctx.fillStyle="#f36";
-                        //ctx.fill;
                     }
                     arr.push(ctx.getImageData(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height));
                     var numofid=String(getid);
-                    area=1;
                     numofid=numofid.replace(/Canvas/,"");
                     numofid=parseInt(numofid);
-                    canvaslist[numofid-1]=area;
                     maxX=locationX[0];
                     maxY=locationY[0];
                     minX=locationX[0];
@@ -311,39 +360,30 @@ function createCanvas(){
                     for(var i=0;i<locationX.length;i++){
                         if(maxX<locationX[i]){
                             maxX=locationX[i];
-                            maxXy=i;
                         }
                     }
-                    maxXy=parseInt(locationY[maxXy]);
 
                     for(var i=0;i<locationX.length;i++){
                         if(minX>locationX[i]){
                             minX=locationX[i];
-                            minXy=i;
                         }
                     }
-                    minXy=parseInt(locationY[minXy]);
 
                     for(var i=0;i<locationY.length;i++){
                         if(maxY<locationY[i]){
                             maxY=locationY[i];
-                            maxYx=i;
                         }
                     }
-                    maxYx=parseInt(locationX[maxYx]);
 
                     for(var i=0;i<locationY.length;i++){
                         if(minY>locationY[i]){
                             minY=locationY[i];
-                            minYx=i;
                         }
                     }
-                    minYx=parseInt(locationX[minYx]);
 
                     for(var i=0;i<canvasheight;i++){
                         for(var j=0;j<canvaswidth;j++){
-                            if(i<maxY&&i>minY&&j<maxX&&j>minX){
-                                
+                            if(i<maxY&&i>minY&&j<maxX&&j>minX){  
                                 allarray[numofid-1][i][j]+=Math.pow(2,index);
                             }           
                         }
@@ -362,9 +402,9 @@ function createCanvas(){
                     }
                 });
     
-                $("#"+getid).mouseleave(function(e){
+                /*$("#"+getid).mouseleave(function(e){
                     mousePressed=false;
-                });
+                });*/
             }
              
             function Draw(x,y,isDown){
@@ -387,8 +427,6 @@ function createCanvas(){
 
         $("#circletool").click(function(){//用圆线标注图像
             $("#"+getid).unbind("mousedown mouseup mousemove mouseleave");
-            //var myCanvas = document.getElementById('myCanvas'); 
-            //console.log(myCanvas);
             function InitThisCircle(){
                 var ctx=$("#"+getid)[0].getContext('2d');
                       
@@ -406,16 +444,11 @@ function createCanvas(){
                 });
 
                 $("#"+getid).mouseup(function(e){
-                    area=3.14*Math.pow(r,2);
                     var numofid=String(getid);
                     numofid=numofid.replace(/Canvas/,"");
                     numofid=parseInt(numofid);
-                    canvaslist[numofid-1]=area;
-                    //alert(canvaslist[numofid-1]);
                     drag=false;
                     arr.push(ctx.getImageData(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height));
-
-
                     var roundx=Math.ceil(rx+x);//圆心x坐标取整
                     var roundy=Math.ceil(ry+y);//圆心y坐标取整
 
@@ -456,13 +489,9 @@ function createCanvas(){
         });
 
         $("#rectangletool").click(function(){//用矩形线标注图像
-            //var myCanvas=$("#canvas"+i); 
-            //console.log(myCanvas);
             $("#"+getid).unbind("mousedown mouseup mousemove mouseleave");
             function InitThisRe(){
                 var ctx=$("#"+getid)[0].getContext('2d');
-                //myCanvas.width = window.innerWidth;
-                //myCanvas.height = window.innerHeight;
                       
                 var rect={},drag=false;
                       
@@ -479,15 +508,9 @@ function createCanvas(){
                 $("#"+getid).mouseup(function(e){
                     drag=false;
                     arr.push(ctx.getImageData(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height));
-                    //console.log(rect.w*rect.h);//矩形面积
-                    //alert(rect.startX+rect.w);
-                    //alert(rect.startY+rect.h);
-                    area=rect.w*rect.h;
                     var numofid=String(getid);
                     numofid=numofid.replace(/Canvas/,"");
                     numofid=parseInt(numofid);
-                    canvaslist[numofid-1]=area;
-                    //alert(canvaslist[numofid-1]);
                     for(var i=rect.startY-1;i<rect.startY+rect.h;i++){
                         for(var j=rect.startX-1;j<rect.startX+rect.w;j++){
                             allarray[numofid-1][i][j]+=Math.pow(2,index);
@@ -514,68 +537,79 @@ function createCanvas(){
                 });
                       
             }
-
             InitThisRe();
-        });
-        
-    
+        });   
     }
 
-    $("#steptwo").click(function(){//标记肿瘤种类函数
+    $("#stepone").click(function(){//点击显示影像资料界面
         
-        var rightboxw=document.getElementById("rightbox").clientWidth;
-        var oMask=document.createElement("div");
-            oMask.id="tablebg";
-            oMask.style.height="667px";
-            oMask.style.width=rightboxw+"px";
-            document.getElementById("rightbox").appendChild(oMask);//弹出悬浮层
-        $(".canvasdiv").css("display","none");      
-        var xmlhttp=new window.XMLHttpRequest();  
-        xmlhttp.open("get","/static/XML/savedata.xml",false); 
-        xmlhttp.send();  
-        xmlDoc=xmlhttp.responseXML.documentElement;
-        x=xmlDoc.getElementsByTagName("INPUT");
-        var formname=new Array(x.length-1);
-        var createf=$("<form></form>");
-        $("#tablebg").append(createf);
-        createf.attr("id","theform");
-
-        for(var i=0;i<x.length;i++){
-            var createi=$("<p></p>");
-            $("#theform").append(createi);
-            createi.html(x[i].getElementsByTagName("TYPENAME")[0].childNodes[0].nodeValue);
-            if(i!=(x.length-1)){
-                formname[i]=x[i].getElementsByTagName("TYPENAME")[0].childNodes[0].nodeValue;
-            }
-            var createc=$("<input></input>");
-            $("#theform").append(createc);
-            //createc.attr("id","theinput");
-            createc.attr("type",x[i].getElementsByTagName("TYPE")[0].childNodes[0].nodeValue);
-            createc.attr("name",x[i].getElementsByTagName("NAME")[0].childNodes[0].nodeValue);
-            createc.attr("value",x[i].getElementsByTagName("VALUE")[0].childNodes[0].nodeValue);
-            if(createc.attr("type")=="submit"){
-                createc.attr("id","theinput");//提交按钮的id为theinput
-            }
-            else{
-                createc.attr("id","Input"+i)
-            }
-            $("#theform").append("</br>");
-        }
-
-        $("#theinput").click(function(){
-            var str="";
-            var formvalue=new Array(x.length-1);//储存表单的值
-            for(var i=0;i<(x.length-1);i++){
-                formvalue[i]=$("#Input"+i).val();
-                str=str+formname[i]+":"+formvalue[i]+";";
-            }
-            feature=str;
-            alert("填写完毕！");
-            document.getElementById("rightbox").removeChild(oMask);
+        if(xmlbuttonsign==1){
+            document.getElementById("rightbox").removeChild(surface);
             $(".canvasdiv").css("display","");
-        });
-
+            xmlbuttonsign=0;
+        }
     });
+
+    $("#steptwo").click(function(){//标记肿瘤种类函数
+
+        if(xmlbuttonsign==0){
+            xmlbuttonsign=1;
+            var rightboxw=document.getElementById("rightbox").clientWidth;
+            surface=document.createElement("div");
+            surface.id="tablebg";
+            surface.style.height="667px";
+            surface.style.width=rightboxw+"px";
+            document.getElementById("rightbox").appendChild(surface);//弹出悬浮层
+            $(".canvasdiv").css("display","none");      
+            var xmlhttp=new window.XMLHttpRequest();  
+            xmlhttp.open("get","/static/XML/savedata.xml",false); 
+            xmlhttp.send();  
+            xmlDoc=xmlhttp.responseXML.documentElement;
+            x=xmlDoc.getElementsByTagName("INPUT");
+            var formname=new Array(x.length-1);
+            var createf=$("<form></form>");
+            $("#tablebg").append(createf);
+            createf.attr("id","theform");
+
+            for(var i=0;i<x.length;i++){
+                var createi=$("<p></p>");
+                $("#theform").append(createi);
+                createi.html(x[i].getElementsByTagName("TYPENAME")[0].childNodes[0].nodeValue);
+                if(i!=(x.length-1)){
+                    formname[i]=x[i].getElementsByTagName("TYPENAME")[0].childNodes[0].nodeValue;
+                }
+                var createc=$("<input></input>");
+                $("#theform").append(createc);
+                
+                createc.attr("type",x[i].getElementsByTagName("TYPE")[0].childNodes[0].nodeValue);
+                createc.attr("name",x[i].getElementsByTagName("NAME")[0].childNodes[0].nodeValue);
+                createc.attr("value",x[i].getElementsByTagName("VALUE")[0].childNodes[0].nodeValue);
+                if(createc.attr("type")=="submit"){
+                    createc.attr("id","theinput");//提交按钮的id为theinput
+                    createc.attr("value","点击提交");
+                }
+                else{
+                    createc.attr("id","Input"+i)
+                }
+                $("#theform").append("</br>");
+            }
+
+            $("#theinput").click(function(){
+                var str="";
+                var formvalue=new Array(x.length-1);//储存表单的值
+                for(var i=0;i<(x.length-1);i++){
+                    formvalue[i]=$("#Input"+i).val();
+                    str=str+formname[i]+":"+formvalue[i]+";";
+                }
+                feature=str;
+                alert("填写完毕！");
+                document.getElementById("rightbox").removeChild(surface);
+                $(".canvasdiv").css("display","");
+                xmlbuttonsign=0;
+            });
+        }
+    });
+    
     $("#submission").click(function(){//完成操作
 
         if(feature.length==0){
@@ -614,7 +648,24 @@ function createCanvas(){
             asd=parseInt(ilist[i]);
             for(var j=0;j<canvasheight;j++){
                 for(var k=0;k<canvaswidth;k++){
-                    newallarray[i][j][k]=allarray[asd-1][j][k];
+                    newallarray[i][j][k]=middlearray[asd-1][j][k];
+                }
+            }
+        }
+        var countofx=0;
+        var countofy=0;
+        var middlestr;
+        for(var i=0;i<newarrayl;i++){
+            for(var j=0;j<canvasheight;j++){
+                for(var k=0;k<canvaswidth;k++){
+                    if(newallarray[i][j][k]<10){
+                        middlestr=String(newallarray[i][j][k]);
+                        newallarray[i][j][k]="a"+middlestr+"a";
+                    }
+                    else if((newallarray[i][j][k]>=10)&&(newallarray[i][j][k]<100)){
+                        middlestr=String(newallarray[i][j][k]);
+                        newallarray[i][j][k]="a"+middlestr;
+                    }
                 }
             }
         }

@@ -52,9 +52,6 @@ body{
 #login:hover{
 	box-shadow:0 0 5px blue;
 }
-#forget{
-	letter-spacing:1px;
-}
 #signup{
 	margin-top:5px;
 	letter-spacing:1px;

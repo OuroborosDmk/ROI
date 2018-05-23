@@ -22,16 +22,19 @@ $(document).ready(function(){
     userid=getjson.list;
     getid=userid.split(",");
 
+    $(".leftbox").css("height","694px");
+    if(parseInt(count)>30){
+        var height=694+(parseInt(count)-30)*22;
+        $(".leftbox").css("height",height+"px");
+    }
     $("#idtable").html(" ");
-    $("#idtable").append("<tr><td>ID</td><td>姓名</td><td>性别</td></tr>");
+    $("#idtable").append("<tr><td>ID</td><td>姓名</td><td>性别</td><td>年龄</td><td>身高</td><td>体重</td><td>职业</td><td>影像资料</td></tr>");
     count=parseInt(count);
     for(var i=0;i<count;i++){
-        var newbox=$("<tr><td>"+(i+1)+"</td><td>"+getid[i]+"</td><td>男</td></tr>");
+        var newbox=$("<tr><td>"+(i+1)+"</td><td>"+getid[i]+"</td><td>男</td><td>50</td><td>180cm</td><td>80kg</td><td>无</td><td><a class='starta' id="+getid[i]+">点此进行标注</a></td></tr>");
         $("#idtable").append(newbox);
-        newbox.attr("class","newbox");
-        newbox.attr("id",getid[i]);
     }
-    $(".newbox").click(function(){
+    $(".starta").click(function(){
         var getid1=this.id;
         var id = {"userid":getid1};
         $.ajax({
@@ -49,16 +52,18 @@ $(document).ready(function(){
     });
 
     $("#image").click(function(){
+        $(".leftbox").css("height","694px");
         $("#idtable").html(" ");
-        $("#idtable").append("<tr><td>ID</td><td>姓名</td><td>性别</td></tr>");
-        //count=parseInt(count);
-        for(var i=0;i<count;i++){
-            newbox=$("<tr><td>"+(i+1)+"</td><td>"+getid[i]+"</td><td>男</td></tr>");
-            $("#idtable").append(newbox);
-            newbox.attr("class","newbox");
-            newbox.attr("id",getid[i]);
+        $("#idtable").append("<tr><td>ID</td><td>姓名</td><td>性别</td><td>年龄</td><td>身高</td><td>体重</td><td>职业</td><td>影像资料</td></tr>");
+        if(count>30){
+            var height=694+(count-30)*22;
+            $(".leftbox").css("height",height+"px");
         }
-        $(".newbox").click(function(){
+        for(var i=0;i<count;i++){
+            newbox=$("<tr><td>"+(i+1)+"</td><td>"+getid[i]+"</td><td>男</td><td>50</td><td>180cm</td><td>80kg</td><td>无</td><td><a class='starta' id="+getid[i]+">点此进行标注</a></td></tr>");
+            $("#idtable").append(newbox);
+        }
+        $(".starta").click(function(){
             getid1=this.id;
             id = {"userid":getid1};
             $.ajax({
@@ -77,6 +82,7 @@ $(document).ready(function(){
     });
     
     $("#history").click(function(){
+        $(".leftbox").css("height","694px");
         var usercount=0;
         $("#idtable").html(" ");
         $("#idtable").append("<tr><td>病人姓名</td><td>性别</td><td>肿瘤体积</td><td>标注面积</td><td>特征</td><td>标注结果</td></tr>")
@@ -91,6 +97,10 @@ $(document).ready(function(){
             },
         });
 
+        if(parseInt(usercount)>30){
+            var height=694+(parseInt(usercount)-30)*40;
+            $(".leftbox").css("height",height+"px");
+        }
         for(var i=0;i<usercount;i++){
             thecount={"postcount":i};
             $.ajax({
