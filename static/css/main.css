@@ -70,7 +70,7 @@ h1{
 .rightbox{
 	float:right;
 	width:90%;
-	height:667px;
+	height:694px;
 	background-color:black;
 }
 .canvasdiv{
@@ -89,31 +89,52 @@ h1{
     z-index:501;
 }
 #tablebg{
-	background-color:#E0E0E0; 
+	background-color:#F0F0F0; 
     margin-right:20%;
     z-index:600;
+    padding-top:80px;
+    box-sizing:border-box;
 }
-#theform{
-	padding-top:40px;
-	padding-left:120px;
-}
-#tablebg p{
-	font-family:"微软雅黑";
-	font-size:25px;
-	margin-top:5px;
-}
-#tablebg input{
-	width:200px;
+#tablebg span{
+	text-align:right;
+	font-size:14px;
+	display:inline-block;
+	margin-left:70px;
 	height:30px;
-	margin-top:5px;
+	width:70px;
+	margin-top:30px;
+}
+.moreinput{
+	width:260px;
+	height:30px;
 	border:1px solid black;
 	box-sizing:border-box;
+	border-radius:2px;
+	margin-left:20px;
+	margin-top:30px;
 }
 #tablebg input:focus{
 	border:1px solid blue;
 }
 #theinput{
-	margin-top:10px;
+	width:280px;
+	height:35px;
+	margin-top:50px;
+	border:1px solid black;
+	box-sizing:border-box;
+	border-radius:2px;
+	display:block-inline;
+	margin-left:140px;
+}
+#returnbtn{
+	width:280px;
+	height:35px;
+	border:1px solid black;
+	box-sizing:border-box;
+	border-radius:2px;
+	margin-top:50px;
+	display:inline;
+	margin-left:240px;
 }
 #toolbox{
     position:fixed;

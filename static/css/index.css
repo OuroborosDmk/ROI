@@ -2,6 +2,7 @@
 	margin:0;
 	padding:0;
 	border:0;
+	font-family:"微软雅黑";
 }
 header{
 	width:100%;
@@ -69,16 +70,19 @@ h1{
 	background-color:#C8C8C8;
 	border:2px solid black;
 	border-collapse:collapse;
+	border-top:none;
+}
+.idtable tr:nth-child(odd){
+	background-color:white;
+}
+.idtable tr:nth-child(even){
+	background-color:#E0E0E0;
 }
 .idtable td{
 	text-align:center;
 	border:2px solid black;
-	background-color:white;
 }
 .starta{
 	cursor:pointer;
-	color:red;
-}
-a:visited{
-	color:blue;
+	color:#000099;
 }

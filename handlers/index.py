@@ -62,15 +62,27 @@ class ResultHandler(tornado.web.RequestHandler):
         f.truncate()
         f.write(patientid)
         f.close()
-        '''
-        try:
-            sql = "INSERT INTO informations(username,patientname,voftumour,area,feature) VALUES ('" + line + "','"+ patientid +"','"+ V +"','"+area+"','"+ feature +"')"
-            cur.execute(sql)
-            conn.commit()
 
-        except:
-            conn.rollback()
-            return false
+        '''
+        sql = "SELECT * FROM informations WHERE username = '" + line + "' AND patientname = '" + patientid + "'"
+        cur.execute(sql)
+        userornot=cur.fetchall()
+        if(userornot):
+            try:
+                sql="UPDATE informations SET voftumour= '"+ V +"',area='"+ area +"',feature='"+ feature +"' WHERE username = '" + line + "' AND patientname = '" + patientid + "'"
+                cur.execute(sql)
+                conn.commit()
+            except:
+                conn.rollback()
+                return false
+        else:
+            try:
+                sql = "INSERT INTO informations(username,patientname,voftumour,area,feature) VALUES ('" + line + "','"+ patientid +"','"+ V +"','"+area+"','"+ feature +"')"
+                cur.execute(sql)
+                conn.commit()
+            except:
+                conn.rollback()
+                return false
 
 class ShowoneHandler(tornado.web.RequestHandler):
     def get(self):

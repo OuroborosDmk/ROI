@@ -123,7 +123,6 @@ function createCanvas(){
     $("canvas").click(function(e){
         if(clicksign==0){
             getid=$(e.target).attr('id');
-            alert(getid);
             openNew();
         }
     });//点击要标注的canvas还原大小以进行标注
@@ -205,7 +204,6 @@ function createCanvas(){
                     }
                     canvaslist[middleindex]=1;//该资料已经被标注过
                     allarea[middleindex]=count;
-                    alert("保存成功！");
                 }
                 var cxt=$("#"+getid)[0].getContext("2d");
                 cxt.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
@@ -303,7 +301,7 @@ function createCanvas(){
             var startX,startY;//储存开始坐标
             var locationX=new Array();
             var locationY=new Array();
-            var maxX,maxY,minX,minY;
+            var maxX,maxY,minX,minY;//最大范围，最小范围
              
             function InitThis() {
                 ctx=$("#"+getid)[0].getContext("2d");
@@ -353,10 +351,65 @@ function createCanvas(){
                     var numofid=String(getid);
                     numofid=numofid.replace(/Canvas/,"");
                     numofid=parseInt(numofid);
+                    var locationXX=new Array();
+                    var locationYY=new Array();
+                    var areaarray=new Array();
+                    var middle=-1;
                     maxX=locationX[0];
                     maxY=locationY[0];
                     minX=locationX[0];
                     minY=locationY[0];
+
+                    for(var i=0;i<locationX.length;i++){
+                        locationXX.push(locationX[i]);
+                        if(middle!=-1){
+                            if(locationX[i]-locationX[middle]>1){
+                                locationXX.push(locationX[middle]+1);
+                            }
+                        }
+                        middle=i;
+
+                    }
+                    middle=-1;
+                    for(var i=0;i<locationY.length;i++){
+                        locationYY.push(locationY[i]);
+                        if(middle!=-1){
+                            if(locationY[i]-locationY[middle]>1){
+                                locationYY.push(locationY[middle]+1);
+                            }
+                        }
+                        middle=i;
+
+                    }
+                    for(var i=0;i<canvasheight;i++){
+                        areaarray[i]=new Array();
+                    }
+
+                    for(var i=0;i<canvasheight;i++){
+                        for(var j=0;j<canvaswidth;j++){
+                            areaarray[i][j]=0;
+                        }
+                    }
+                    
+                    var indexcount;
+                    for(var k=0;k<locationX.length;k++){
+                        indexcount=locationX[k];
+                        for(var i=0;i<locationX.length;i++){
+                            if(locationY[i]==locationY[k]){
+                                if(indexcount>=locationX[i]){
+                                    for(var j=indexcount;j>=locationX[i];j--){
+                                        areaarray[locationY[i]][j]="a";
+                                    }
+                                }
+                                else if(indexcount<=locationX[i]){
+                                    for(var j=indexcount;j<=locationX[i];j++){
+                                        areaarray[locationY[i]][j]="a";
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
                     for(var i=0;i<locationX.length;i++){
                         if(maxX<locationX[i]){
                             maxX=locationX[i];
@@ -383,9 +436,11 @@ function createCanvas(){
 
                     for(var i=0;i<canvasheight;i++){
                         for(var j=0;j<canvaswidth;j++){
-                            if(i<maxY&&i>minY&&j<maxX&&j>minX){  
-                                allarray[numofid-1][i][j]+=Math.pow(2,index);
-                            }           
+                            if(i<maxY&&i>minY&&j<maxX&&j>minX){
+                                if(areaarray[i][j]=="a"){  
+                                    allarray[numofid-1][i][j]+=Math.pow(2,index);
+                                }
+                            }          
                         }
                     }   
                     for(var i=0;i<canvasheight;i++){
@@ -557,7 +612,7 @@ function createCanvas(){
             var rightboxw=document.getElementById("rightbox").clientWidth;
             surface=document.createElement("div");
             surface.id="tablebg";
-            surface.style.height="667px";
+            surface.style.height="694px";
             surface.style.width=rightboxw+"px";
             document.getElementById("rightbox").appendChild(surface);//弹出悬浮层
             $(".canvasdiv").css("display","none");      
@@ -572,7 +627,7 @@ function createCanvas(){
             createf.attr("id","theform");
 
             for(var i=0;i<x.length;i++){
-                var createi=$("<p></p>");
+                var createi=$("<span></span>");
                 $("#theform").append(createi);
                 createi.html(x[i].getElementsByTagName("TYPENAME")[0].childNodes[0].nodeValue);
                 if(i!=(x.length-1)){
@@ -589,10 +644,15 @@ function createCanvas(){
                     createc.attr("value","点击提交");
                 }
                 else{
+                    createc.attr("class","moreinput")
                     createc.attr("id","Input"+i)
                 }
-                $("#theform").append("</br>");
             }
+            var creater=$("<input></input>");
+            $("#theform").append(creater);
+            creater.attr("id","returnbtn");
+            creater.attr("type","submit");
+            creater.attr("value","点击返回");
 
             $("#theinput").click(function(){
                 var str="";
@@ -603,6 +663,13 @@ function createCanvas(){
                 }
                 feature=str;
                 alert("填写完毕！");
+                document.getElementById("rightbox").removeChild(surface);
+                $(".canvasdiv").css("display","");
+                xmlbuttonsign=0;
+            });
+
+            $("#returnbtn").click(function(){
+                
                 document.getElementById("rightbox").removeChild(surface);
                 $(".canvasdiv").css("display","");
                 xmlbuttonsign=0;

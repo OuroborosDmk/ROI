@@ -31,7 +31,7 @@ $(document).ready(function(){
     $("#idtable").append("<tr><td>ID</td><td>姓名</td><td>性别</td><td>年龄</td><td>身高</td><td>体重</td><td>职业</td><td>影像资料</td></tr>");
     count=parseInt(count);
     for(var i=0;i<count;i++){
-        var newbox=$("<tr><td>"+(i+1)+"</td><td>"+getid[i]+"</td><td>男</td><td>50</td><td>180cm</td><td>80kg</td><td>无</td><td><a class='starta' id="+getid[i]+">点此进行标注</a></td></tr>");
+        var newbox=$("<tr><td>"+(i+1)+"</td><td>"+getid[i]+"</td><td>男</td><td>50</td><td>180cm</td><td>80kg</td><td>无</td><td><a class='starta' id="+getid[i]+">点击此处进行标注</a></td></tr>");
         $("#idtable").append(newbox);
     }
     $(".starta").click(function(){
@@ -60,7 +60,7 @@ $(document).ready(function(){
             $(".leftbox").css("height",height+"px");
         }
         for(var i=0;i<count;i++){
-            newbox=$("<tr><td>"+(i+1)+"</td><td>"+getid[i]+"</td><td>男</td><td>50</td><td>180cm</td><td>80kg</td><td>无</td><td><a class='starta' id="+getid[i]+">点此进行标注</a></td></tr>");
+            newbox=$("<tr><td>"+(i+1)+"</td><td>"+getid[i]+"</td><td>男</td><td>50</td><td>180cm</td><td>80kg</td><td>无</td><td><a class='starta' id="+getid[i]+">点击此处进行标注</a></td></tr>");
             $("#idtable").append(newbox);
         }
         $(".starta").click(function(){
