@@ -164,11 +164,11 @@ function createCanvas(){
             tools.appendChild(revoketools);
         var savetools=document.createElement("button");
             savetools.id="savetool";
-            savetools.innerHTML="保存并返回";
+            savetools.innerHTML="保存";
             tools.appendChild(savetools);
         var returntools=document.createElement("button");
             returntools.id="returntool";
-            returntools.innerHTML="不保存并返回";
+            returntools.innerHTML="放弃";
             tools.appendChild(returntools);
         
         $("#rightbox").css("overflow","hidden");
@@ -303,7 +303,7 @@ function createCanvas(){
             var locationY=new Array();
             var maxX,maxY,minX,minY;//最大范围，最小范围
              
-            function InitThis() {
+
                 ctx=$("#"+getid)[0].getContext("2d");
              
                 $("#"+getid).mousedown(function(e){
@@ -312,6 +312,8 @@ function createCanvas(){
                         return false;
                     }
                     mousePressed=true;
+                    locationX.length=0;
+                    locationY.length=0;
                     Draw(e.pageX-$(this).offset().left,e.pageY-$(this).offset().top,false);
                     startX=e.pageX-$(this).offset().left;
                     startY=e.pageY-$(this).offset().top;
@@ -320,21 +322,21 @@ function createCanvas(){
                 $("#"+getid).mousemove(function(e){
                     if(mousePressed){
                         Draw(e.pageX-$(this).offset().left,e.pageY-$(this).offset().top,true);
-                    }
-                    function getLocation(x, y){  
+                    
+                        function getLocation(x, y){  
                             var mouse=$("#"+getid)[0].getBoundingClientRect();  
                             return {  
-                                x:(x-mouse.left)*(704/mouse.width),  
-                                y:(y-mouse.top)*(701/mouse.height)
+                                x:x-mouse.left,  
+                                y:y-mouse.top
                             };  
+                        }
+                        var lofmouse=getLocation(e.clientX,e.clientY);
+                        locationX.push(parseInt(lofmouse.x));
+                        locationY.push(parseInt(lofmouse.y));
                     }
-                    var lofmouse=getLocation(e.clientX,e.clientY);
-                    locationX.push(parseInt(lofmouse.x));
-                    locationY.push(parseInt(lofmouse.y));
                 });
              
                 $("#"+getid).mouseup(function(e){
-                    var middlecount=0;
                     mousePressed=false;
                     
                     if(parseInt(startX)!=parseInt(lastX)||parseInt(startY)!=parseInt(lastY)){
@@ -351,65 +353,22 @@ function createCanvas(){
                     var numofid=String(getid);
                     numofid=numofid.replace(/Canvas/,"");
                     numofid=parseInt(numofid);
-                    var locationXX=new Array();
-                    var locationYY=new Array();
                     var areaarray=new Array();
-                    var middle=-1;
                     maxX=locationX[0];
                     maxY=locationY[0];
                     minX=locationX[0];
                     minY=locationY[0];
 
-                    for(var i=0;i<locationX.length;i++){
-                        locationXX.push(locationX[i]);
-                        if(middle!=-1){
-                            if(locationX[i]-locationX[middle]>1){
-                                locationXX.push(locationX[middle]+1);
-                            }
-                        }
-                        middle=i;
-
-                    }
-                    middle=-1;
-                    for(var i=0;i<locationY.length;i++){
-                        locationYY.push(locationY[i]);
-                        if(middle!=-1){
-                            if(locationY[i]-locationY[middle]>1){
-                                locationYY.push(locationY[middle]+1);
-                            }
-                        }
-                        middle=i;
-
-                    }
                     for(var i=0;i<canvasheight;i++){
                         areaarray[i]=new Array();
                     }
 
                     for(var i=0;i<canvasheight;i++){
                         for(var j=0;j<canvaswidth;j++){
-                            areaarray[i][j]=0;
+                            areaarray[i][j]="0";
                         }
                     }
-                    
-                    var indexcount;
-                    for(var k=0;k<locationX.length;k++){
-                        indexcount=locationX[k];
-                        for(var i=0;i<locationX.length;i++){
-                            if(locationY[i]==locationY[k]){
-                                if(indexcount>=locationX[i]){
-                                    for(var j=indexcount;j>=locationX[i];j--){
-                                        areaarray[locationY[i]][j]="a";
-                                    }
-                                }
-                                else if(indexcount<=locationX[i]){
-                                    for(var j=indexcount;j<=locationX[i];j++){
-                                        areaarray[locationY[i]][j]="a";
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
+
                     for(var i=0;i<locationX.length;i++){
                         if(maxX<locationX[i]){
                             maxX=locationX[i];
@@ -434,6 +393,49 @@ function createCanvas(){
                         }
                     }
 
+                    var indexcount;//中间变量
+                    for(var k=0;k<locationX.length;k++){
+                        indexcount=locationX[k];
+                        for(var i=0;i<locationX.length;i++){
+                            if(locationY[k]==locationY[i]){
+                                if(indexcount>locationX[i]){
+                                    for(var j=indexcount;j>=locationX[i];j--){
+                                        areaarray[locationY[i]][j]="a";
+                                    }
+                                }
+                                else if(indexcount<locationX[i]){
+                                    for(var j=indexcount;j<=locationX[i];j++){
+                                        areaarray[locationY[i]][j]="a";
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    for(var i=minY;i<maxY;i++){
+                        for(var j=minX;j<maxX;j++){
+                            if((i-2>=0)&&(i+2>=0)){
+                                if((areaarray[i][j]=="0")&&(areaarray[i-1][j]=="a")&&(areaarray[i+1][j]=="a")){
+                                    areaarray[i][j]="a";
+                                }
+
+                                if((areaarray[i][j]=="0")&&(areaarray[i-2][j]=="a")&&(areaarray[i+2][j]=="a")&&(areaarray[i-1][j]=="0")&&(areaarray[i+1][j]=="0")){
+                                    areaarray[i][j]="a";
+                                }
+
+                                if((areaarray[i][j]=="0")&&(areaarray[i-1][j]=="a")&&(areaarray[i+1][j]=="0")&&(areaarray[i+2][j]=="a")){
+                                    areaarray[i][j]="a";
+                                }
+
+                                if((areaarray[i][j]=="0")&&(areaarray[i+1][j]=="a")&&(areaarray[i-1][j]=="0")&&(areaarray[i-2][j]=="a")){
+                                    areaarray[i][j]="a";
+                                }
+
+                            }
+                            
+                        }
+                    }
+
                     for(var i=0;i<canvasheight;i++){
                         for(var j=0;j<canvaswidth;j++){
                             if(i<maxY&&i>minY&&j<maxX&&j>minX){
@@ -443,14 +445,7 @@ function createCanvas(){
                             }          
                         }
                     }   
-                    for(var i=0;i<canvasheight;i++){
-                        for(var j=0;j<canvaswidth;j++){
-                            if(allarray[numofid-1][i][j]==0){
-                                middlecount+=1;
-                            }
-                        }
-                    } 
-                    //alert(middlecount);
+
                     middleindex=numofid-1;
                     if(index<8){
                         index+=1;
@@ -460,7 +455,6 @@ function createCanvas(){
                 /*$("#"+getid).mouseleave(function(e){
                     mousePressed=false;
                 });*/
-            }
              
             function Draw(x,y,isDown){
                 if (isDown){
@@ -477,7 +471,6 @@ function createCanvas(){
                 lastX=x; lastY=y;
             }
 
-            InitThis(); 
         });
 
         $("#circletool").click(function(){//用圆线标注图像
