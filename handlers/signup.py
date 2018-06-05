@@ -11,6 +11,10 @@ class SignupHandler(tornado.web.RequestHandler):
     def post(self):
         zusername = self.get_argument("zusername")
         zpassword = self.get_argument("zpassword")
+        zname = self.get_argument("zname")
+        zmailbox = self.get_argument("zmailbox")
+        zoccupation = self.get_argument("zoccupation")
+        zcompany = self.get_argument("zcompany")
         sql = "select * from users where username ='" + zusername + "'"
         cur.execute(sql)
         lines = cur.fetchall()

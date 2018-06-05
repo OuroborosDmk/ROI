@@ -12,6 +12,7 @@ from handlers.index import IndexfHandler
 from handlers.index import ResultHandler
 from handlers.index import ShowoneHandler
 from handlers.index import MatrixHandler
+from handlers.index import PatientHandler
 
 url = [
     (r'/', LoginHandler),
@@ -22,4 +23,5 @@ url = [
     (r'/result',ResultHandler),
     (r'/showone',ShowoneHandler),
     (r'/matrix',MatrixHandler),
+    (r'/getpatient',PatientHandler)
 ]

@@ -23,17 +23,14 @@ h1{
 	margin-left:100px;
 }
 .body_one{
-	margin-top:150px;
+	margin-top:130px;
 	width:100%;
-}
-.body_two{
-	float:left;
-	width:45%;	
 }
 #telea{
 	border-bottom:1px solid #C0C0C0;
 }
 .body_three{
+	margin-top:50px;
 	float:left;
 	width:55%;
 	height:100%;
@@ -48,7 +45,7 @@ h1{
 	margin-bottom:20px;
 	display:block;
 	width:45%;
-	height:55px;
+	height:54px;
 	background-color:white;
 }
 #teleform label{
@@ -63,13 +60,27 @@ h1{
 }
 #teleform button{
 	margin-top:10px;
-	width:45%;
+	width:20%;
 	height:55px;
-	margin-left:30%;
+	float:left;
 	font-size:18px;
 	background-color:#0000FF;
 	color:white;
+	margin-left:30%;
 }
 #teleform p{
 	display:inline;
+}
+.returna{
+	display:block;
+	margin-top:10px;
+	width:20%;
+	height:55px;
+	float:left;
+	font-size:18px;
+	background-color:#0000FF;
+	color:white;
+	margin-left:5%;
+	text-align:center;
+	line-height:54px;
 }

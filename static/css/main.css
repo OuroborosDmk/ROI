@@ -13,7 +13,7 @@ body{
 header{
 	width:100%;
 	height:100px;
-	background-color:#303030;
+	background-color:#505050;
 	border-bottom:2px solid black;
 	box-sizing:border-box;
 }
@@ -48,6 +48,17 @@ h1{
 	font-family:"微软雅黑";
 }
 .xmlbutton{
+	border-bottom:1px solid black;
+	width:100%;
+	height:70px;
+	outline:none;
+	background-color:#989898;
+	color:white;
+	text-align:center;
+	font-size:20px;
+	font-family:"微软雅黑";
+}
+.returnbutton{
 	border-bottom:1px solid black;
 	width:100%;
 	height:70px;
@@ -139,11 +150,132 @@ h1{
 #toolbox{
     position:fixed;
     width:150px;
+    height:400px;
     top:100px;
     right:0;
     z-index:502;
     background-color:black;
     border:1px solid black;
+}
+#colorbox{
+	box-sizing:border-box;
+	position:fixed;
+	width:100px;
+	height:350px;
+	top:101px;
+	right:150px;
+	z-index:502;
+	background-color:#989898;
+    border:1px solid black;
+    padding-left:4px;
+    padding-right:4px;
+    padding-top:9px;
+}
+.colordiv{
+	box-sizing:border-box;
+	float:left;
+	width:30px;
+	height:30px;
+	border:1px solid black;
+}
+#color0{
+	background-color:#FFFFFF;
+}
+#color1{
+	background-color:#C8C8C8;
+}
+#color2{
+	background-color:#888888;
+}
+#color3{
+	background-color:#404040;
+}
+#color4{
+	background-color:#000000;
+}
+#color5{
+	background-color:#280000;
+}
+#color6{
+	background-color:#800000;
+}
+#color7{
+	background-color:#C80000;
+}
+#color8{
+	background-color:#CC3300;
+}
+#color9{
+	background-color:#CC6600;
+}
+#color10{
+	background-color:#CCFF00;
+}
+#color11{
+	background-color:#FF0066;
+}
+#color12{
+	background-color:#FF66FF;
+}
+#color13{
+	background-color:#FF00CC;
+}
+#color14{
+	background-color:#993399;
+}
+#color15{
+	background-color:#990066;
+}
+#color16{
+	background-color:#660066;
+}
+#color17{
+	background-color:#6633FF;
+}
+#color18{
+	background-color:#330000;
+}
+#color19{
+	background-color:#330033;
+}
+#color20{
+	background-color:#330066;
+}
+#color21{
+	background-color:#3300CC;
+}
+#color22{
+	background-color:#000099;
+}
+#color23{
+	background-color:#0000FF;
+}
+#color24{
+	background-color:#0066FF;
+}
+#color25{
+	background-color:#00CCFF;
+}
+#color26{
+	background-color:#00FFFF;
+}
+#color27{
+	background-color:#00FF66;
+}
+#color28{
+	background-color:#00FF33;
+}
+#color29{
+	background-color:#00FF00;
+}
+#color30{
+	background-color:#00CC00;
+}
+#color31{
+	background-color:#009900;
+}
+#color32{
+	background-color:#006600;
 }
 #circletool{
     display:block;

@@ -9,11 +9,12 @@ class MainHandler(tornado.web.RequestHandler):
 		self.render("main.html")
 	
 	def post(self):
+		username=self.get_argument("username")
 		uid=""
 		imgcount=""
 		newlist=""
 		alllist=[]
-		f=open(r"D:\Python34\myweb\static\value\josn.txt","r")
+		f=open("D:\Python34\myweb\static\\value\\"+username+"\json.txt","r")
 		line=f.readline()
 		line=line.strip('\n')
 		alllist.append(line)

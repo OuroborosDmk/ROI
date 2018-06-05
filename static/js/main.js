@@ -129,6 +129,7 @@ function createCanvas(){
     
     function openNew(){//悬浮层弹出，还原canvas大小
         clicksign=1;
+        var linecolor="#0000FF";
         var rightboxw=document.getElementById("rightbox").clientWidth;//获取实际宽度
         var oMask=document.createElement("div");
             oMask.id="canvasbg";
@@ -140,8 +141,10 @@ function createCanvas(){
         //弹出工具栏
         var tools=document.createElement("div");
             tools.id="toolbox";
-            tools.style.height="667px";
             document.getElementById("rightbox").appendChild(tools);
+        var colortools=document.createElement("div");
+            colortools.id="colorbox";
+            document.getElementById("rightbox").appendChild(colortools);       
         var circletools=document.createElement("button");
             circletools.id="circletool";
             circletools.innerHTML="圆线";
@@ -170,6 +173,12 @@ function createCanvas(){
             returntools.id="returntool";
             returntools.innerHTML="放弃";
             tools.appendChild(returntools);
+        for(var i=0;i<33;i++){
+            var newcolorbox=$("<div></div>");
+            $("#colorbox").append(newcolorbox);
+            newcolorbox.attr("class","colordiv")
+                       .attr("id","color"+i);
+        }
         
         $("#rightbox").css("overflow","hidden");
         $(".canvasdiv").css("visibility","hidden");
@@ -180,13 +189,117 @@ function createCanvas(){
                     .css("margin-left","0")
                     .css("margin-top","0")
                     .css("position","fixed");
-                    
                     //.css("float","left");
         $("#"+getid).attr("width","704px")
                     .attr("height","701px");//Canvas的高宽不能通过CSS设置，只能通过属性直接设置                 
         
+        $(".colordiv").click(function(){
+            var boxcolor=this.id;
+            boxcolor=String(boxcolor);
+            boxcolor=boxcolor.replace(/color/,"");
+            if(boxcolor=="0"){
+                linecolor="#FFFFFF";
+            }
+            else if(boxcolor=="1"){
+                linecolor="#C8C8C8";
+            }
+            else if(boxcolor=="2"){
+                linecolor="#888888";
+            }
+            else if(boxcolor=="3"){
+                linecolor="#404040";
+            }
+            else if(boxcolor=="4"){
+                linecolor="#000000";
+            }
+            else if(boxcolor=="5"){
+                linecolor="#280000";
+            }
+            else if(boxcolor=="6"){
+                linecolor="#800000";
+            }
+            else if(boxcolor=="7"){
+                linecolor="#C80000";
+            }
+            else if(boxcolor=="8"){
+                linecolor="#CC3300";
+            }
+            else if(boxcolor=="9"){
+                linecolor="#CC6600";
+            }
+            else if(boxcolor=="10"){
+                linecolor="#CCFF00";
+            }
+            else if(boxcolor=="11"){
+                linecolor="#FF0066";
+            }
+            else if(boxcolor=="12"){
+                linecolor="#FF66FF";
+            }
+            else if(boxcolor=="13"){
+                linecolor="#FF00CC";
+            }
+            else if(boxcolor=="14"){
+                linecolor="#993399";
+            }
+            else if(boxcolor=="15"){
+                linecolor="#990066";
+            }
+            else if(boxcolor=="16"){
+                linecolor="#660066";
+            }
+            else if(boxcolor=="17"){
+                linecolor="#6633FF";
+            }
+            else if(boxcolor=="18"){
+                linecolor="#330000";
+            }
+            else if(boxcolor=="19"){
+                linecolor="#330033";
+            }
+            else if(boxcolor=="20"){
+                linecolor="#330066";
+            }
+            else if(boxcolor=="21"){
+                linecolor="#3300CC";
+            }
+            else if(boxcolor=="22"){
+                linecolor="#000099";
+            }
+            else if(boxcolor=="23"){
+                linecolor="#0000FF";
+            }
+            else if(boxcolor=="24"){
+                linecolor="#0066FF";
+            }
+            else if(boxcolor=="25"){
+                linecolor="#00CCFF";
+            }
+            else if(boxcolor=="26"){
+                linecolor="#00FFFF";
+            }
+            else if(boxcolor=="27"){
+                linecolor="#00FF66";
+            }
+            else if(boxcolor=="28"){
+                linecolor="#00FF33";
+            }
+            else if(boxcolor=="29"){
+                linecolor="#00FF00";
+            }
+            else if(boxcolor=="30"){
+                linecolor="#00CC00";
+            }
+            else if(boxcolor=="31"){
+                linecolor="#009900";
+            }
+            else if(boxcolor=="32"){
+                linecolor="#006600";
+            }
+        });
+
         $("#savetool").click(function(){
-            var returnsign=confirm("确认返回？");
+            var returnsign=confirm("确认保存并返回？");
             if(returnsign==true){
                 var count=0;
                 if(middleindex!=-1){
@@ -209,6 +322,7 @@ function createCanvas(){
                 cxt.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
                 document.getElementById("rightbox").removeChild(oMask);
                 document.getElementById("rightbox").removeChild(toolbox);
+                document.getElementById("rightbox").removeChild(colorbox);
                 $("#"+getid).css("z-index","auto")
                             .css("position","static")
                             .css("margin-top","70px")
@@ -221,6 +335,7 @@ function createCanvas(){
                 arr=[];
                 index=0;
                 $("#"+getid).unbind("mousedown mouseup mousemove mouseleave");
+                linecolor="#0000FF";
             }
         });
 
@@ -232,6 +347,7 @@ function createCanvas(){
                 cxt.clearRect(0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
                 document.getElementById("rightbox").removeChild(oMask);
                 document.getElementById("rightbox").removeChild(toolbox);
+                document.getElementById("rightbox").removeChild(colorbox);
                 $("#"+getid).css("z-index","auto")
                             .css("position","static")
                             .css("margin-top","70px")
@@ -251,6 +367,7 @@ function createCanvas(){
                         }
                     }
                 }
+                linecolor="#0000FF";
             }
         });
 
@@ -343,7 +460,7 @@ function createCanvas(){
                         ctx.beginPath();
                         ctx.moveTo(lastX,lastY);
                         ctx.lineTo(startX,startY);
-                        ctx.strokeStyle="#0000FF";
+                        ctx.strokeStyle=linecolor;
                         ctx.lineWidth=1;
                         ctx.lineJoin="round";
                         ctx.closePath();
@@ -459,7 +576,7 @@ function createCanvas(){
             function Draw(x,y,isDown){
                 if (isDown){
                     ctx.beginPath();
-                    ctx.strokeStyle="#0000FF";
+                    ctx.strokeStyle=linecolor;
                     ctx.lineWidth=1;
                     ctx.lineJoin="round";
                     ctx.moveTo(lastX,lastY);
@@ -527,7 +644,7 @@ function createCanvas(){
                         ctx.arc(rx+x,ry+y,r,0,Math.PI*2);
                         ctx.stroke();
                         ctx.lineWidth=0.5;
-                        ctx.strokeStyle="#0000FF"; 
+                        ctx.strokeStyle=linecolor; 
                     }
                 });
 
@@ -580,7 +697,7 @@ function createCanvas(){
                     }
                         ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
                         ctx.lineWidth=0.5;
-                        ctx.strokeStyle="#0000FF";
+                        ctx.strokeStyle=linecolor;
                     }
                 });
                       
@@ -590,11 +707,17 @@ function createCanvas(){
     }
 
     $("#stepone").click(function(){//点击显示影像资料界面
-        
         if(xmlbuttonsign==1){
             document.getElementById("rightbox").removeChild(surface);
             $(".canvasdiv").css("display","");
             xmlbuttonsign=0;
+        }
+    });
+
+    $("#returnbutton").click(function(){
+        var returnsign=confirm("确认返回？");
+        if(returnsign==true){
+            window.location.href = "/index";
         }
     });
 
@@ -662,7 +785,6 @@ function createCanvas(){
             });
 
             $("#returnbtn").click(function(){
-                
                 document.getElementById("rightbox").removeChild(surface);
                 $(".canvasdiv").css("display","");
                 xmlbuttonsign=0;
@@ -753,8 +875,9 @@ function createCanvas(){
             volume=parseInt(volume);
         }
 
-        var v = {"V":volume,"patient":uid,"features":feature,"area":areastr};
-
+        var c_username=getCookie('username');
+        newallarray.push("username:"+c_username);
+        var v={"V":volume,"patient":uid,"features":feature,"area":areastr,"username":c_username};
         var theMatrix=JSON.stringify(newallarray);
 
         $.ajax({
@@ -788,17 +911,48 @@ function createCanvas(){
 }
 
 function getthejson(){
+    var c_username=getCookie('username');
+    var username={"username":c_username};
     $.ajax({
         async:false,//同步请求，相应完成后继续脚步操作
         type:"post",
         url:"/main",
+        data:username,
         success:function(data){
             getjson=data;
         },
     });
 }
+
+function getCookie(c_name){
+    var arr=document.cookie.split(';');
+    for(var i=0;i<arr.length;i++){
+        var arr2=arr[i].split('=');     
+        if(arr2[0]==c_name){  
+            var getC = decodeURIComponent(arr2[1]);
+            return getC;
+        }
+    }
+         
+    return "";
+}
+
+function checkCookie(){
+    var username=getCookie('username');
+    if(username!=null&&username!=""){
+        return true;
+    }
+    else{
+        alert("还没有进行登录！");
+        window.location.href="/";
+    }
+}
+
+
+
 var getjson;
 
+checkCookie();//检查用户是否登陆以及获取登陆信息
 getthejson();//向后端提交请求并返回数据
 createCanvas();
 
