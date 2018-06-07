@@ -1,3 +1,4 @@
+/*通用部分*/
 *{
 	border:0;
 	margin:0;
@@ -6,6 +7,7 @@
 	font-size:14px;
 	text-decoration:none;
 }
+/*body*/
 body{
 	display:flex;
 	justify-content:center;
@@ -55,3 +57,4 @@ body{
 	letter-spacing:1px;
 	margin-left:100px;
 }
+

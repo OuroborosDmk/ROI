@@ -85,6 +85,7 @@ class ResultHandler(tornado.web.RequestHandler):
                 conn.commit()
             except:
                 conn.rollback()
+                return false
         else:
             try:
                 sql = "INSERT INTO informations(username,patientname,voftumour,area,feature) VALUES ('" + username + "','"+ patientid +"','"+ V +"','"+area+"','"+ feature +"')"
@@ -92,6 +93,7 @@ class ResultHandler(tornado.web.RequestHandler):
                 conn.commit()
             except:
                 conn.rollback()
+                return false
 
 class ShowoneHandler(tornado.web.RequestHandler):
     def get(self):
