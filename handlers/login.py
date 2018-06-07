@@ -7,7 +7,6 @@ import methods.readdb as mrd
 class LoginHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("login.html")
-
     def post(self):
         username = self.get_argument("name")
         password = self.get_argument("password")

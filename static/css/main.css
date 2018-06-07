@@ -128,24 +128,24 @@ h1{
 	border:1px solid blue;
 }
 #theinput{
-	width:280px;
+	width:100px;
 	height:35px;
-	margin-top:50px;
+	margin-top:100px;
 	border:1px solid black;
 	box-sizing:border-box;
 	border-radius:2px;
 	display:block-inline;
-	margin-left:140px;
+	margin-left:20px;
 }
 #returnbtn{
-	width:280px;
+	width:100px;
 	height:35px;
 	border:1px solid black;
 	box-sizing:border-box;
 	border-radius:2px;
-	margin-top:50px;
+	margin-top:100px;
 	display:inline;
-	margin-left:240px;
+	margin-left:50px;
 }
 #toolbox{
     position:fixed;
@@ -170,6 +170,19 @@ h1{
     padding-left:4px;
     padding-right:4px;
     padding-top:9px;
+}
+#linebox{
+	box-sizing:border-box;
+	position:fixed;
+	width:50px;
+	height:50px;
+	top:101px;
+	right:250px;
+	z-index:502;
+	background-color:#989898;
+    border:1px solid black;
+    text-align:center;
+    line-height:50px;
 }
 .colordiv{
 	box-sizing:border-box;
@@ -333,4 +346,20 @@ h1{
     border-bottom:2px;
    	background-color:#989898;
     outline:none;
+}
+#userpage{
+	position:absolute;
+	display:block;
+	right:30px;
+	top:50px;
+	cursor:pointer;
+	color:white;
+}
+#exit{
+	position:absolute;
+	display:block;
+	cursor:pointer;
+	right:30px;
+	color:white;
+	top:70px;
 }

@@ -22,12 +22,12 @@ class SignupHandler(tornado.web.RequestHandler):
             self.write("error")
         else:
             try:
-                sql = "INSERT INTO users(username,password) VALUES (" + zusername +","+ zpassword +")"
+                sql="INSERT INTO users(username,password,name,mailbox,occupation,company) VALUES (" + zusername +","+ zpassword +","+ zname +","+ zmailbox +","+ zoccupation +","+ zcompany +")"
                 cur.execute(sql)
                 conn.commit()
-
             except:
-                conn.rollback()   
+                conn.rollback()
+                return false   
             self.write("ok")      
         
         

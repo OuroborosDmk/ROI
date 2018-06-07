@@ -7,7 +7,6 @@ import os
 class MainHandler(tornado.web.RequestHandler):
 	def get(self):
 		self.render("main.html")
-	
 	def post(self):
 		username=self.get_argument("username")
 		uid=""

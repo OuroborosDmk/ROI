@@ -40,6 +40,12 @@ $(document).ready(function(){
         }
     }
 
+    function setCookie(c_name,value,time){
+        var exdate=new Date();
+        exdate.setDate(exdate.getDate()+time);
+        document.cookie=c_name+ "=" +escape(value)+";expires="+exdate.toGMTString();
+    }
+    
     function removeCookie(name){
         setCookie(name, '1', -1);
     }
@@ -196,13 +202,17 @@ $(document).ready(function(){
         }
     });
     
-    $("#end").click(function(){
-        var returnsign=confirm("确认返回？");
+    $("#exit").click(function(){
+        var returnsign=confirm("确认退出登录？");
         if(returnsign==true){
             removeCookie("username");
             $("#rightbox").html(" ");
             window.location.href = "/";
         }
+    });
 
+    $("#userpage").click(function(){
+        $("#rightbox").html(" ");
+        window.location.href = "/userpage";
     });
 });

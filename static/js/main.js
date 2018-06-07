@@ -130,6 +130,7 @@ function createCanvas(){
     function openNew(){//悬浮层弹出，还原canvas大小
         clicksign=1;
         var linecolor="#0000FF";
+        var linewidth=1;
         var rightboxw=document.getElementById("rightbox").clientWidth;//获取实际宽度
         var oMask=document.createElement("div");
             oMask.id="canvasbg";
@@ -144,7 +145,10 @@ function createCanvas(){
             document.getElementById("rightbox").appendChild(tools);
         var colortools=document.createElement("div");
             colortools.id="colorbox";
-            document.getElementById("rightbox").appendChild(colortools);       
+            document.getElementById("rightbox").appendChild(colortools);  
+        var linetools=document.createElement("div");
+            linetools.id="linebox";
+            document.getElementById("rightbox").appendChild(linetools);     
         var circletools=document.createElement("button");
             circletools.id="circletool";
             circletools.innerHTML="圆线";
@@ -173,6 +177,7 @@ function createCanvas(){
             returntools.id="returntool";
             returntools.innerHTML="放弃";
             tools.appendChild(returntools);
+        $("#linebox").append("<select id='selectbox'><option>0.5</option><option>1</option><option>1.5</option><option>2</option><option>2.5</option></select>")
         for(var i=0;i<33;i++){
             var newcolorbox=$("<div></div>");
             $("#colorbox").append(newcolorbox);
@@ -193,6 +198,10 @@ function createCanvas(){
         $("#"+getid).attr("width","704px")
                     .attr("height","701px");//Canvas的高宽不能通过CSS设置，只能通过属性直接设置                 
         
+        $("#selectbox").change(function(){
+            linewidth=parseInt($("#selectbox").val());
+        });
+
         $(".colordiv").click(function(){
             var boxcolor=this.id;
             boxcolor=String(boxcolor);
@@ -323,6 +332,7 @@ function createCanvas(){
                 document.getElementById("rightbox").removeChild(oMask);
                 document.getElementById("rightbox").removeChild(toolbox);
                 document.getElementById("rightbox").removeChild(colorbox);
+                document.getElementById("rightbox").removeChild(linebox);
                 $("#"+getid).css("z-index","auto")
                             .css("position","static")
                             .css("margin-top","70px")
@@ -336,6 +346,7 @@ function createCanvas(){
                 index=0;
                 $("#"+getid).unbind("mousedown mouseup mousemove mouseleave");
                 linecolor="#0000FF";
+                linewidth=1;
             }
         });
 
@@ -348,6 +359,7 @@ function createCanvas(){
                 document.getElementById("rightbox").removeChild(oMask);
                 document.getElementById("rightbox").removeChild(toolbox);
                 document.getElementById("rightbox").removeChild(colorbox);
+                document.getElementById("rightbox").removeChild(linebox);
                 $("#"+getid).css("z-index","auto")
                             .css("position","static")
                             .css("margin-top","70px")
@@ -368,6 +380,7 @@ function createCanvas(){
                     }
                 }
                 linecolor="#0000FF";
+                linewidth=1;
             }
         });
 
@@ -461,7 +474,7 @@ function createCanvas(){
                         ctx.moveTo(lastX,lastY);
                         ctx.lineTo(startX,startY);
                         ctx.strokeStyle=linecolor;
-                        ctx.lineWidth=1;
+                        ctx.lineWidth=linewidth;
                         ctx.lineJoin="round";
                         ctx.closePath();
                         ctx.stroke();
@@ -577,7 +590,7 @@ function createCanvas(){
                 if (isDown){
                     ctx.beginPath();
                     ctx.strokeStyle=linecolor;
-                    ctx.lineWidth=1;
+                    ctx.lineWidth=linewidth;
                     ctx.lineJoin="round";
                     ctx.moveTo(lastX,lastY);
                     ctx.lineTo(x,y);
@@ -643,7 +656,7 @@ function createCanvas(){
                         r=Math.sqrt(rx*rx+ry*ry);
                         ctx.arc(rx+x,ry+y,r,0,Math.PI*2);
                         ctx.stroke();
-                        ctx.lineWidth=0.5;
+                        ctx.lineWidth=linewidth;
                         ctx.strokeStyle=linecolor; 
                     }
                 });
@@ -696,7 +709,7 @@ function createCanvas(){
                         ctx.putImageData(arr[arr.length-1],0,0,0,0,$("#"+getid)[0].width,$("#"+getid)[0].height);
                     }
                         ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
-                        ctx.lineWidth=0.5;
+                        ctx.lineWidth=linewidth;
                         ctx.strokeStyle=linecolor;
                     }
                 });
@@ -757,7 +770,7 @@ function createCanvas(){
                 createc.attr("value",x[i].getElementsByTagName("VALUE")[0].childNodes[0].nodeValue);
                 if(createc.attr("type")=="submit"){
                     createc.attr("id","theinput");//提交按钮的id为theinput
-                    createc.attr("value","点击提交");
+                    createc.attr("value","提交");
                 }
                 else{
                     createc.attr("class","moreinput")
@@ -768,7 +781,7 @@ function createCanvas(){
             $("#theform").append(creater);
             creater.attr("id","returnbtn");
             creater.attr("type","submit");
-            creater.attr("value","点击返回");
+            creater.attr("value","返回");
 
             $("#theinput").click(function(){
                 var str="";
@@ -948,7 +961,30 @@ function checkCookie(){
     }
 }
 
+function setCookie(c_name,value,time){
+    var exdate=new Date();
+    exdate.setDate(exdate.getDate()+time);
+    document.cookie=c_name+ "=" +escape(value)+";expires="+exdate.toGMTString();
+}
 
+function removeCookie(name){
+    setCookie(name, '1', -1);
+}
+
+$("#exit").click(function(){
+    var returnsign=confirm("确认退出登录？");
+    if(returnsign==true){
+        removeCookie("username");
+        $("#rightbox").html(" ");
+        window.location.href = "/";
+    }
+});
+
+$("#userpage").click(function(){
+    $("#rightbox").html(" ");
+    window.location.href = "/userpage";
+    
+});
 
 var getjson;
 

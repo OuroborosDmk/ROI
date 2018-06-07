@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<link rel="stylesheet" type="text/css" href="{{static_url("css/userpage.css")}}"/>
+	<link rel="stylesheet" type="text/css" href="{{static_url("css/bootstrap.css")}}"/>
+	<link rel="shortcut icon" href="#"/>
+	<title>个人中心</title>
+</head>
+<body>
+	<header>
+		<h1 class="h1">基于HTML5的医学影像ROI在线标注系统个人中心</h1>
+		<a id="exit">退出登录</a>
+	</header>
+	<div class="leftbox">
+		<button class="pagebutton" id="userbutton">个人信息</button>
+		<button class="pagebutton" id="changepaw">修改密码</button>
+		<button class="pagebutton" id="changeifm">修改信息</button>
+		<button class="pagebutton" id="returnbutton">返回主页</button>
+	</div>
+	<div class="rightbox" id="rightbox">
+		<div id="div1">
+			<form class="form-horizontal" style="border:1px solid black;border-radius:10px;">
+			  	<div class="form-group">
+			    	<label class="col-sm-2 control-label">用户名</label>
+			    	<div class="col-sm-10">
+			      		<p class="form-control-static" id="showusername"></p>
+			    	</div>
+			  	</div>
+			  	<div class="form-group">
+			  	  	<label class="col-sm-2 control-label">姓名</label>
+			  	  	<div class="col-sm-10">
+			  	    	<p class="form-control-static" id="showname"></p>
+			  	  	</div>
+			  	</div>
+			  	<div class="form-group">
+			  	  	<label class="col-sm-2 control-label">邮箱</label>
+			  	  	<div class="col-sm-10">
+			  	    	<p class="form-control-static" id="showmailbox"></p>
+			  	  	</div>
+			  	</div>
+			  	<div class="form-group">
+			  	  	<label class="col-sm-2 control-label">职业</label>
+			  	  	<div class="col-sm-10">
+			  	    	<p class="form-control-static" id="showocc"></p>
+			  	  	</div>
+			  	</div>
+			  	<div class="form-group">
+			  	  	<label class="col-sm-2 control-label">公司</label>
+			  	  	<div class="col-sm-10">
+			  	    	<p class="form-control-static" id="showcom"></p>
+			  	  	</div>
+			  	</div>
+			</form>
+		</div>
+		<div id="div2">
+			<form id="div2form">
+			  	<div class="form-group">
+			    	<label for="exampleInputPassword1">请输入原密码</label>
+			    	<input type="password" class="form-control" placeholder="原密码" id="password" requird>
+			  	</div>
+			  	<div class="form-group">
+			   	 	<label for="exampleInputPassword1">请输入新密码</label>
+			    	<input type="password" class="form-control" placeholder="新密码" id="newpassword1" requird>
+			  	</div>
+			  	<div class="form-group">
+			    	<label for="exampleInputPassword1">确认新密码</label>
+			    	<input type="password" class="form-control" placeholder="确认密码" id="newpassword2" requird>
+			  	</div>
+			  	<button type="submit" class="btn btn-default" id="changepswbtn">提交</button>
+			 </form>
+		</div>
+		<div id="div3">
+			<form id="div3form">
+			  	<div class="form-group">
+			    	<label for="exampleInputEmail1">姓名</label>
+			    	<input type="text" class="form-control" placeholder="姓名" id="u_name">
+			  	</div>
+			  	<div class="form-group">
+			    	<label for="exampleInputEmail1">邮箱</label>
+			    	<input type="text" class="form-control" placeholder="邮箱" id="mailbox">
+			 	</div>
+			  	<div class="form-group">
+			    	<label for="exampleInputEmail1">职业</label>
+			    	<input type="text" class="form-control" placeholder="职业" id="occ">
+			 	</div>
+			 	<div class="form-group">
+			    	<label for="exampleInputEmail1">公司</label>
+			    	<input type="text" class="form-control" placeholder="公司" id="com">
+			 	</div>
+			  	<button type="submit" class="btn btn-default" id="changeuserbtn">提交</button>
+			</form>
+		</div>
+	</div>
+	<script src="{{static_url("js/jquery-3.2.1.min.js")}}"></script>
+    <script src="{{static_url("js/userpage.js")}}"></script>
+</body>
+</html>

@@ -50,8 +50,3 @@ body{
 #login:hover{
 	box-shadow:0 0 5px blue;
 }
-#signup{
-	margin-top:5px;
-	letter-spacing:1px;
-	margin-left:100px;
-}

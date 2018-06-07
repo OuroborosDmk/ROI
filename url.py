@@ -13,6 +13,15 @@ from handlers.index import ResultHandler
 from handlers.index import ShowoneHandler
 from handlers.index import MatrixHandler
 from handlers.index import PatientHandler
+from handlers.userpage import UserpageHandler
+from handlers.userpage import ChangepswHandler
+from handlers.userpage import ChangeinfHandler
+'''
+from handlers.admin import AdminloginHandler
+from handlers.admin import AdminHandler
+from handlers.admin import AdminpatHandler
+from handlers.admin import AdminuserHandler
+'''
 
 url = [
     (r'/', LoginHandler),
@@ -23,5 +32,8 @@ url = [
     (r'/result',ResultHandler),
     (r'/showone',ShowoneHandler),
     (r'/matrix',MatrixHandler),
-    (r'/getpatient',PatientHandler)
+    (r'/getpatient',PatientHandler),
+    (r'/userpage',UserpageHandler),
+    (r'/changepsw',ChangepswHandler),
+    (r'/changeinf',ChangeinfHandler)
 ]
